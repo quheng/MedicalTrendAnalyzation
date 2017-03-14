@@ -10,6 +10,8 @@ import logging
 import jieba
 import json
 
+from tqdm import tqdm
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 RAW_DATA_DIR = f'{BASE_DIR}/raw_data'
 BAG_OF_WORDS = f'{BASE_DIR}/data/bag_of_words.json'
@@ -17,14 +19,19 @@ BAG_OF_WORDS = f'{BASE_DIR}/data/bag_of_words.json'
 STOP_WORDS = set(line.strip() for line in open(f'{BASE_DIR}/script/stop_words.txt', 'r', encoding='utf-8').readlines())
 STOP_WORDS.add("生物谷")
 
-def main():
+
+def build_bag_of_words_model():
     """
-    main function
+    build bag of words model
     """
     bag_of_word = []
-
+    count = 0
+    err = 0
     for parent, _, file_names in os.walk(RAW_DATA_DIR):
-        for filename in file_names:
+        logging.info(f'got {len(file_names)} files')
+        pb_file_names = tqdm(file_names)
+        for filename in tqdm(file_names):
+            pb_file_names.set_description("Processing %s" % filename)
             full_file_name = os.path.join(parent, filename)
             with open(full_file_name, 'r', encoding='utf-8') as raw_data:
                 try:
@@ -38,13 +45,15 @@ def main():
                             else:
                                 word_list[word] = 1
                     bag_of_word.append({filename: word_list})
+                    count += 1
                 except Exception as exception:
+                    err += 1
                     logging.error(f"Error during process {filename}, error message: {exception}")
     with open(BAG_OF_WORDS, 'w', encoding='utf-8') as result_file:
-        # result_file.write(json.dumps(bag_of_word, ensure_ascii=False))
         json.dump(bag_of_word, result_file, ensure_ascii=False)
+    logging.info(f"finish, ${count} success, ${err} failed")
 
 if __name__ == '__main__':
-    main()
+    build_bag_of_words_model()
 
 
