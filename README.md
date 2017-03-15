@@ -22,3 +22,18 @@ The structure of bag of words model is
    }
 }
 ```
+
+### word relationship
+using `python script/bag_of_words_builder.py` to build. The structure is 
+```
+{
+    word: {
+        amount: int
+        link: {
+            word: link_amount
+        }
+    }
+}
+```
+WARNING: this is to big to handle, for example, in sample data, I got more than 400000 words which mean 10^11 edges. 
+The final result has more than 700MB.
