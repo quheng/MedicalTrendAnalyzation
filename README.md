@@ -14,3 +14,11 @@ Put your data in ./raw_data folder and named your articles with '%Y-%m-%d:articl
 ### bag of words model
 You can find some useful information about bag of words at [bag of words model](https://en.wikipedia.org/wiki/Bag-of-words_model).
 Using `python script/bag_of_words_builder.py` to build this model, then you can find your result at './data/bag_of_words.json', I also put a sample result there.
+The structure of bag of words model is
+```
+{
+   filename:{
+      words: amount
+   }
+}
+```

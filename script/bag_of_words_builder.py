@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 """
 Building bag of words model from raw data.
-The model structure is [ { filename: { words: amount }}]
+The model structure is { filename: { words: amount } }
 """
 
 import os
 import os.path
 import jieba
 import json
-import logging
 
 from tqdm import tqdm
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-print(BASE_DIR)
 RAW_DATA_DIR = os.path.join(BASE_DIR, 'raw_data')
 BAG_OF_WORDS_DIR = os.path.join(BASE_DIR, 'data/bag_of_words.json')
 STOP_WORDS_DIR = os.path.join(BASE_DIR, 'script/stop_words.txt')
@@ -26,7 +24,7 @@ def build_bag_of_words_model():
     """
     build bag of words model
     """
-    bag_of_word = []
+    bag_of_word = {}
     count = 0
     err = 0
     for parent, _, file_names in os.walk(RAW_DATA_DIR):
@@ -46,7 +44,7 @@ def build_bag_of_words_model():
                                 word_list[word] += 1
                             else:
                                 word_list[word] = 1
-                    bag_of_word.append({filename: word_list})
+                    bag_of_word[filename] = word_list
                     count += 1
                 except Exception as exception:
                     err += 1
