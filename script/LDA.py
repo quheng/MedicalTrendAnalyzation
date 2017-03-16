@@ -13,7 +13,7 @@ STOP_WORDS_DIR = os.path.join(BASE_DIR, 'script/stop_words.txt')
 STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_DIR, 'r', encoding='utf-8').readlines())
 STOP_WORDS.add('生物谷')
 
-TOPICS_NUMBER = 10
+TOPICS_NUMBER = 4
 
 def __get_row_data():
     """
@@ -34,7 +34,8 @@ def __get_row_data():
 def __vectorizer(raw_data):
     print('extracting tf features')
     t0 = time.time()
-    vectorizer = CountVectorizer(max_df=0.95,
+    vectorizer = CountVectorizer(max_df=0.8,
+                                 min_df=0.01,
                                  stop_words=STOP_WORDS,
                                  analyzer='word',
                                  tokenizer=jieba.cut)
