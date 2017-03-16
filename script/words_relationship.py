@@ -30,12 +30,12 @@ def build_words_relation_ship():
                 if word in words_relation_ship:
                     word_relation = words_relation_ship[word]
                     word_relation['amount'] += amount
-                    # for other_word in words.keys():
-                    #     if word != other_word:
-                    #         if word in word_relation['link']:
-                    #             word_relation['link'][other_word] += 1
-                    #         else:
-                    #             word_relation['link'][other_word] = 1
+                    for other_word in words.keys():
+                        if word != other_word:
+                            if word in word_relation['link']:
+                                word_relation['link'][other_word] += 1
+                            else:
+                                word_relation['link'][other_word] = 1
                 else:
                     word_relation = {
                         'amount': amount,

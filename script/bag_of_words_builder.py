@@ -5,7 +5,6 @@ The model structure is { filename: { words: amount } }
 """
 
 import os
-import os.path
 import jieba
 import json
 
