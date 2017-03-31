@@ -1,4 +1,5 @@
 # chalk
+[![MIT License][license-badge]](LICENSE)
 This is a project to do some medical trend analysis and visualization.
 
 ## environment
