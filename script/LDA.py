@@ -2,15 +2,16 @@
 import os
 import jieba
 import time
+import json
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 RAW_DATA_DIR = os.path.join(BASE_DIR, 'raw_data')
-BAG_OF_WORDS_DIR = os.path.join(BASE_DIR, 'data/bag_of_words.json')
-STOP_WORDS_DIR = os.path.join(BASE_DIR, 'script/stop_words.txt')
+TOPIC_PATH = os.path.join(BASE_DIR, 'data/topic.json')
+STOP_WORDS_PATH = os.path.join(BASE_DIR, 'script/stop_words.txt')
 
-STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_DIR, 'r', encoding='utf-8').readlines())
+STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_PATH, 'r', encoding='utf-8').readlines())
 STOP_WORDS.add('生物谷')
 
 TOPICS_NUMBER = 4
@@ -70,3 +71,5 @@ if __name__ == '__main__':
     vectorizer, tf = __vectorizer(raw_data)
     lda = __build_lda_model(tf)
     __topic_list(lda, vectorizer.get_feature_names())
+    f = open('tem.json', 'w')
+    json.dump(lda.transform(tf)[10:20], f)
