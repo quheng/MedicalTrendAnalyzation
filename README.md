@@ -49,4 +49,4 @@ first of all, you should make sure that you have installed `npm` and `node`.
 2. build `npm run build`
 3. run `npm start`
 
-now you can visit [0.0.0.0:2333](0.0.0.0:2333)
+now you can visit [http://0.0.0.0:2333](http://0.0.0.0:2333)
