@@ -4,8 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "BABEL_ENV=dev babel-node server",
+    "start:prod": "NODE_ENV=production node lib",
+    "build": "npm-run-all build:client build:server",
+    "build:server": "babel server --out-dir lib",
+    "build:client": "webpack --config config/webpack.config.js",
+    "lint": "standard --verbose | snazzy",
+    "fix": "standard --fix | snazzy"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^0.13.3",
+    "polyfill": "^0.1.0",
+    "webpack": "^2.3.2"
+  },
+  "dependencies": {
+    "express": "^4.15.2",
+    "lodash": "^4.17.4",
+    "path": "^0.12.7"
+  }
 }
