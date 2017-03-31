@@ -1,5 +1,5 @@
 # chalk
-[![MIT License][license-badge]](LICENSE)
+[![MIT License][license-badge]](LICENSE.md)
 This is a project to do some medical trend analysis and visualization.
 
 ## environment
@@ -25,7 +25,7 @@ The structure of bag of words model is
 ```
 
 ### word relationship
-Using `python script/bag_of_words_builder.py` to build. The structure is 
+Using `python script/bag_of_words_builder.py` to build. The structure is
 ```
 {
     word: {
@@ -36,7 +36,7 @@ Using `python script/bag_of_words_builder.py` to build. The structure is
     }
 }
 ```
-WARNING: this is to big to handle, for example, in sample data, I got more than 400000 words which mean 10^11 edges. 
+WARNING: this is to big to handle, for example, in sample data, I got more than 400000 words which mean 10^11 edges.
 The final result has more than 700MB.
 
 
@@ -45,7 +45,7 @@ Using `python script/lda.py` to build. You can find useful information at [lda](
 
 ## visualization
 first of all, you should make sure that you have installed `npm` and `node`, [nvm](https://github.com/creationix/nvm) is helpful.
- 
+
 1. install dependencies `npm install`
 2. build `npm run build`
 3. run `npm start`
