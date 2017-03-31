@@ -1,6 +1,7 @@
 # chalk
 [![MIT License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://opensource.org/licenses/MIT)
 [![JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
+[![python version](https://img.shields.io/badge/python-3.6.0-blue.svg)](https://www.python.org)
 
 This is a project to do some medical trend analysis and visualization.
 
