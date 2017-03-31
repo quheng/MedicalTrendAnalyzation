@@ -8,13 +8,15 @@ from sklearn.decomposition import LatentDirichletAllocation
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 RAW_DATA_DIR = os.path.join(BASE_DIR, 'raw_data')
-TOPIC_PATH = os.path.join(BASE_DIR, 'data/topic.json')
+TOPIC_PATH = os.path.join(BASE_DIR, 'data/lda/topic.json')
+DOC_PATH = os.path.join(BASE_DIR, 'data/lda/doc.json')
 STOP_WORDS_PATH = os.path.join(BASE_DIR, 'script/stop_words.txt')
 
 STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_PATH, 'r', encoding='utf-8').readlines())
 STOP_WORDS.add('生物谷')
 
 TOPICS_NUMBER = 4
+TOPICS_WORD = 6
 
 def __get_row_data():
     """
@@ -59,17 +61,15 @@ def __build_lda_model(tf):
 
 
 def __topic_list(lda, feature_names):
-    top_words = 10
+    topic_list = []
     for topic_idx, topic in enumerate(lda.components_):
-        print("Topic #%d:" % topic_idx)
-        print(" ".join([feature_names[i]
-                        for i in topic.argsort()[:-top_words - 1:-1]]))
-    print()
+        topic_list.append([feature_names[i] for i in topic.argsort()[:-TOPICS_WORD - 1:-1]])
+    return topic_list
 
 if __name__ == '__main__':
     raw_data = __get_row_data()
     vectorizer, tf = __vectorizer(raw_data)
     lda = __build_lda_model(tf)
-    __topic_list(lda, vectorizer.get_feature_names())
-    f = open('tem.json', 'w')
-    json.dump(lda.transform(tf)[10:20], f)
+    topic_list = __topic_list(lda, vectorizer.get_feature_names())
+    json.dump(topic_list, open(TOPIC_PATH, 'w'), ensure_ascii=False)
+    json.dump(lda.transform(tf).tolist(), open(DOC_PATH, 'w'), ensure_ascii=False)
