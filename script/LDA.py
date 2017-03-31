@@ -71,5 +71,6 @@ if __name__ == '__main__':
     vectorizer, tf = __vectorizer(raw_data)
     lda = __build_lda_model(tf)
     topic_list = __topic_list(lda, vectorizer.get_feature_names())
+    print('saving model')
     json.dump(topic_list, open(TOPIC_PATH, 'w'), ensure_ascii=False)
     json.dump(lda.transform(tf).tolist(), open(DOC_PATH, 'w'), ensure_ascii=False)
