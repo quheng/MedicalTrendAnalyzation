@@ -41,3 +41,10 @@ The final result has more than 700MB.
 
 ### lda model
 Using `python script/lda.py` to build. You can find useful information at [lda](http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.LatentDirichletAllocation.html#sklearn.decomposition.LatentDirichletAllocation.perplexity), and sample data at './data/lda'
+
+## visualization
+first of all you should make sure that you have installed `npm` and `node`. 
+1. install dependencies `npm install`
+2. build `npm run build`
+3. run `npm start`
+4. visit [0.0.0.0:2333](0.0.0.0:2333)
