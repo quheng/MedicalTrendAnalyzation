@@ -17,13 +17,9 @@ const common = {
     main: CLIENT,
     vendor: [
       'moment',
-      'redux',
       'react',
       'lodash',
-      'reselect',
       'react-dom',
-      'redux-saga',
-      'react-redux',
       'react-router',
       'react-decoration',
       'react-addons-perf'

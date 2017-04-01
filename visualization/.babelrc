@@ -3,15 +3,15 @@
   "plugins": [
     [
       "import", {
-      "libraryName": "antd",
-      "style": "css"
-    }
+        "libraryName": "antd",
+        "style": "css"
+      }
     ],
     [
       "transform-runtime", {
-      "polyfill": false,
-      "regenerator": true
-    }
+        "polyfill": false,
+        "regenerator": true
+      }
     ],
     [ "transform-export-extensions" ],
     [ "transform-decorators-legacy" ],
