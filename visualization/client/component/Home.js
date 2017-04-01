@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
 import styles from './Home.css'
+import WordsCloud from './WordsCloud'
 
 import { Menu, Icon } from 'antd'
 import { autobind } from 'react-decoration'
-
 const SubMenu = Menu.SubMenu
 
 const FUNC = {
@@ -41,6 +41,16 @@ class Home extends Component {
   }
 
   @autobind
+  getPanel () {
+    switch (this.state.func) {
+      case FUNC.ldaWordCloud:
+        return <WordsCloud />
+      default:
+        return <div>敬请期待</div>
+    }
+  }
+
+  @autobind
   changeFunc (func) {
     this.setState({
       func
@@ -51,7 +61,9 @@ class Home extends Component {
     return (
       <div className={styles.container}>
         <Sider changeFunc={this.changeFunc} />
-        {this.state.func}
+        {
+          this.getPanel()
+        }
       </div>
     )
   }
