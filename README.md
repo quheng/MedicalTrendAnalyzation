@@ -41,7 +41,7 @@ Using `python script/bag_of_words_builder.py` to build. The structure is
 }
 ```
 WARNING: this is to big to handle, for example, in sample data, I got more than 400000 words which mean 10^11 edges.
-The final result has more than 700MB.
+The final result has more than 700MB, so I just preserve word amount.
 
 
 ### lda model
