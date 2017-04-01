@@ -28,8 +28,8 @@ def build_words_relation_ship():
             bag_of_words.set_description('Processing %s' % filename)
             for word, amount in words.items():
                 if word in words_relation_ship:
-                    word_relation = words_relation_ship[word]
-                    word_relation['amount'] += amount
+                    word_amount = words_relation_ship[word]
+                    word_amount += amount
                     # for other_word in words.keys():
                     #     if word != other_word:
                     #         if word in word_relation['link']:
@@ -37,13 +37,14 @@ def build_words_relation_ship():
                     #         else:
                     #             word_relation['link'][other_word] = 1
                 else:
-                    word_relation = {
-                        'amount': amount
-                        #'link': {}
-                    }
-                words_relation_ship[word] = word_relation
+                    # word_relation = {
+                    #     'amount': amount,
+                    #     'link': {}
+                    # }
+                    word_amount = 0
+                words_relation_ship[word] = word_amount
     with open(WORDS_RELATION_SHIP_DIR, 'w', encoding='utf-8') as words_relation_ship_file:
-        json.dump(sorted(words_relation_ship.items(), key=lambda d:d[1]['amount']), words_relation_ship_file, ensure_ascii=False)
+        json.dump(sorted(words_relation_ship.items(), key=lambda d:d[1], reverse=True), words_relation_ship_file, ensure_ascii=False)
 
 if __name__ == '__main__':
     build_words_relation_ship()
