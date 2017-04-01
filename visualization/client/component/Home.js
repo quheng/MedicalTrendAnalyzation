@@ -1,5 +1,8 @@
 import React, {Component} from 'react'
+import styles from './Home.css'
+
 import { Menu, Icon } from 'antd'
+import { autobind } from 'react-decoration'
 
 const SubMenu = Menu.SubMenu
 
@@ -13,7 +16,7 @@ class Sider extends React.Component {
     return (
       <Menu
         onClick={(e) => { this.props.changeFunc(e.key) }}
-        style={{ width: 120, height: 1000 }}
+        className={styles.sider}
         defaultSelectedKeys={[FUNC.ldaWordCloud]}
         defaultOpenKeys={['lda']}
         mode='inline'
@@ -30,12 +33,15 @@ class Sider extends React.Component {
 }
 
 class Home extends Component {
-  state = {
-    func: FUNC.ldaWordCloud
+  constructor () {
+    super()
+    this.state = {
+      func: FUNC.ldaWordCloud
+    }
   }
 
+  @autobind
   changeFunc (func) {
-    console.log(this)
     this.setState({
       func
     })
@@ -43,7 +49,7 @@ class Home extends Component {
 
   render () {
     return (
-      <div >
+      <div className={styles.container}>
         <Sider changeFunc={this.changeFunc} />
         {this.state.func}
       </div>
