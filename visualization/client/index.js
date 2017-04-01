@@ -4,13 +4,10 @@ import {
   Router,
   browserHistory
 } from 'react-router'
-import { Provider } from 'react-redux'
 
 import rootRoutes from './rootRoutes'
 
 ReactDOM.render(
-  <Provider>
-    <Router history={browserHistory} routes={rootRoutes} />
-  </Provider>,
+  <Router history={browserHistory} routes={rootRoutes} />,
   document.getElementById('app')
 )
