@@ -40,7 +40,6 @@ class WordsCloud extends Component {
         onChange={function () {}}
         ticks
         markerLabel={[]} />
-
     </div>
   }
 
