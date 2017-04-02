@@ -55,3 +55,14 @@ first of all, you should make sure that you have installed `npm` and `node`, [nv
 3. run `npm start`
 
 now you can visit [http://0.0.0.0:2333](http://0.0.0.0:2333)
+
+## api
+### /words-relationship
+Due to words relationship is too big to handle, just return words amount now.
+```
+[
+    [words, amount]
+]
+```
+
+
