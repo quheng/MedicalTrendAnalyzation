@@ -10,7 +10,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 RAW_DATA_DIR = os.path.join(BASE_DIR, 'raw_data')
 TOPIC_PATH = os.path.join(BASE_DIR, 'data/lda/topic.json')
 DOC_PATH = os.path.join(BASE_DIR, 'data/lda/doc.json')
-STOP_WORDS_PATH = os.path.join(BASE_DIR, 'script/stop_words.txt')
+STOP_WORDS_PATH = os.path.join(BASE_DIR, 'process/stop_words.txt')
 
 STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_PATH, 'r', encoding='utf-8').readlines())
 STOP_WORDS.add('生物谷')
@@ -23,6 +23,7 @@ def __get_row_data():
     build bag of words model
     """
     raw_data = []
+    files_info = []
     t0 = time.time()
     print('reading raw data')
     for parent, _, file_names in os.walk(RAW_DATA_DIR):
@@ -30,8 +31,10 @@ def __get_row_data():
             full_file_name = os.path.join(parent, filename)
             with open(full_file_name, 'r', encoding='utf-8') as file_data:
                 raw_data.append(file_data.read())
+                file_info = filename.split(':')
+                files_info.append({'date':file_info[0], 'filename': file_info[1][:-4]})
     print(f'got {len(raw_data)} files in {time.time()-t0}s')
-    return raw_data
+    return files_info, raw_data
 
 
 def __vectorizer(raw_data):
@@ -67,10 +70,11 @@ def __topic_list(lda, feature_names):
     return topic_list
 
 if __name__ == '__main__':
-    raw_data = __get_row_data()
+    file_info, raw_data = __get_row_data()
     vectorizer, tf = __vectorizer(raw_data)
     lda = __build_lda_model(tf)
     topic_list = __topic_list(lda, vectorizer.get_feature_names())
     print('saving model')
+    print(file_info)
     json.dump(topic_list, open(TOPIC_PATH, 'w'), ensure_ascii=False)
     json.dump(lda.transform(tf).tolist(), open(DOC_PATH, 'w'), ensure_ascii=False)

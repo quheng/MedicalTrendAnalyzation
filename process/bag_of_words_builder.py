@@ -13,7 +13,7 @@ from tqdm import tqdm
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 RAW_DATA_DIR = os.path.join(BASE_DIR, 'raw_data')
 BAG_OF_WORDS_DIR = os.path.join(BASE_DIR, 'data/bag_of_words.json')
-STOP_WORDS_DIR = os.path.join(BASE_DIR, 'script/stop_words.txt')
+STOP_WORDS_DIR = os.path.join(BASE_DIR, 'process/stop_words.txt')
 
 STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_DIR, 'r', encoding='utf-8').readlines())
 STOP_WORDS.add('生物谷')

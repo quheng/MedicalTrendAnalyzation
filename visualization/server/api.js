@@ -13,4 +13,9 @@ apiRouter.get('/words-relationship', (req, res) => {
   res.json(_.slice(wordsRelationship, 0, limit))
 })
 
+apiRouter.get('/lda', (req, res) => {
+  const limit = req.query['limit']
+  res.json(_.slice(wordsRelationship, 0, limit))
+})
+
 export default apiRouter
