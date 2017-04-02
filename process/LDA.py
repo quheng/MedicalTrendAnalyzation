@@ -69,12 +69,16 @@ def __topic_list(lda, feature_names):
         topic_list.append([feature_names[i] for i in topic.argsort()[:-TOPICS_WORD - 1:-1]])
     return topic_list
 
+def __set_lda_info_to_file_info(file_info, lda_model):
+    for index, item in enumerate(file_info):
+        item['lda'] = lda_model[index].tolist()
+
 if __name__ == '__main__':
     file_info, raw_data = __get_row_data()
     vectorizer, tf = __vectorizer(raw_data)
     lda = __build_lda_model(tf)
     topic_list = __topic_list(lda, vectorizer.get_feature_names())
+    __set_lda_info_to_file_info(file_info, lda.transform(tf))
     print('saving model')
-    print(file_info)
     json.dump(topic_list, open(TOPIC_PATH, 'w'), ensure_ascii=False)
-    json.dump(lda.transform(tf).tolist(), open(DOC_PATH, 'w'), ensure_ascii=False)
+    json.dump(file_info, open(DOC_PATH, 'w'), ensure_ascii=False)
