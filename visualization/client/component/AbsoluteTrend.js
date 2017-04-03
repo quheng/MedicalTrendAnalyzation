@@ -18,7 +18,7 @@ const getMaCalculator = (values) => (dayCount) => {
     }
     let sum = 0
     for (let j = 0; j < dayCount; j++) {
-      sum += values[i - j][1]
+      sum += values[i - j]
     }
     result.push(sum / dayCount)
   }
@@ -39,7 +39,7 @@ const getOption = (trend) => {
       }
     },
     legend: {
-      data: ['日K', 'MA5', 'MA10', 'MA20', 'MA30']
+      data: ['MA5', 'MA10', 'MA20', 'MA30']
     },
     grid: {
       left: '10%',
@@ -153,11 +153,6 @@ export default class AbsoluteTrend extends React.Component {
   drawAbsoluteTrend () {
     const option = getOption(this.state.trend)
     this.myChart.setOption(option)
-    return (
-      <div
-        className={styles.container}
-        ref='AbsoluteTrend' />
-    )
   }
 
   render () {

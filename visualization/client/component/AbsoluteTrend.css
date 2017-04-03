@@ -4,6 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 66px;
   flex-direction:column;
   -moz-user-select: -moz-none;
   -khtml-user-select: none;
