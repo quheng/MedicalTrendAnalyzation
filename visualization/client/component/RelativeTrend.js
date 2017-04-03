@@ -2,6 +2,7 @@ import React from 'react'
 import echarts from 'echarts'
 import _ from 'lodash'
 import fetch from 'isomorphic-fetch'
+
 import styles from './AbsoluteTrend.css'
 import Loading from './Loading'
 
@@ -13,7 +14,18 @@ const getOption = (trend) => {
 }
 
 const transformData = (rawData) => {
-
+  const topicAmountList = []
+  rawData.forEach(data => {
+    const lda = data.lda
+    const topic = lda.indexOf(Math.max(...lda))
+    if (_.isEmpty(topicAmountList[topic])) {
+      topicAmountList[topic] = {}
+      topicAmountList[topic][data.date] = [data.date, 1, topic]
+    } else {
+      topicAmountList[topic][data.date] = _.get(topicAmountList[topic], data.date, 0) + 1
+    }
+  })
+  return _.concat(...topicAmountList)
 }
 
 export default class AbsoluteTrend extends React.Component {
