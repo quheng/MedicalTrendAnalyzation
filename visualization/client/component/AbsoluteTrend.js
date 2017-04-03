@@ -30,7 +30,7 @@ const getOption = (trend) => {
   return {
     title: {
       text: '绝对数量趋势',
-      left: 0
+      left: 100
     },
     tooltip: {
       trigger: 'axis',
