@@ -30,7 +30,7 @@ const getOption = ({topic, trend}) => ({
   },
 
   legend: {
-    data: ['主题1', '主题2']
+    data: topic.map((words, index) => `主题${index + 1}`)
   },
 
   singleAxis: {
@@ -76,9 +76,9 @@ const transformData = (rawData) => {
     const date = moment(data.date, rawDateFormat).format(dateFormat)
     topicAmountList.forEach((topicAmount, index) => {
       if (index === topic) {
-        topicAmount[date] = [date, _.get(topicAmount, date, ['', 0, ''])[1] + 1, '主题' + (index + 1)]
+        topicAmount[date] = [date, _.get(topicAmount, date, ['', 0, ''])[1] + 1, `主题${index + 1}`]
       } else {
-        topicAmount[date] = [date, _.get(topicAmount, date, ['', 0, ''])[1], '主题' + (index + 1)]
+        topicAmount[date] = [date, _.get(topicAmount, date, ['', 0, ''])[1], `主题${index + 1}`]
       }
     })
   })
@@ -97,6 +97,10 @@ export default class AbsoluteTrend extends React.Component {
       .then(checkStatus)
       .then((res) => (res.json()))
       .then((doc) => this.setState({trend: transformData(doc)}))
+    fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
+      .then(checkStatus)
+      .then((res) => (res.json()))
+      .then((topic) => this.setState({topic}))
   }
 
   componentDidMount () {
@@ -113,7 +117,7 @@ export default class AbsoluteTrend extends React.Component {
     return <div
       className={styles.container}
       ref='RelativeTrend'>
-      {_.isEmpty(this.state.trend)
+      {_.isEmpty(this.state.trend) && _.isEmpty(this.state.topic)
         ? <Loading />
         : this.drawRelativeTrend()}
     </div>
