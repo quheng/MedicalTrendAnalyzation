@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import styles from './Home.css'
-import WordsCloud from './WordsCloud'
-import AbsoluteTrend from './AbsoluteTrend'
-import RelativeTrend from './RelativeTrend'
+import WordsCloud from './lda/WordsCloud'
+import AbsoluteTrend from './lda/AbsoluteTrend'
+import RelativeTrend from './lda/RelativeTrend'
 
 import { Menu, Icon } from 'antd'
 import { autobind } from 'react-decoration'
