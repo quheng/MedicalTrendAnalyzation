@@ -9,9 +9,57 @@ import Loading from './Loading'
 import { autobind } from 'react-decoration'
 import { checkStatus, serverAddress } from '../util'
 
-const getOption = (trend) => {
+const getOption = (topic, data) => ({
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'line',
+      lineStyle: {
+        color: 'rgba(0,0,0,0.2)',
+        width: 1,
+        type: 'solid'
+      }
+    }
+  },
 
-}
+  legend: {
+    data: [1, 2, 3, 4]  // todo
+  },
+
+  singleAxis: {
+    top: 50,
+    bottom: 50,
+    axisTick: {},
+    axisLabel: {},
+    type: 'time',
+    axisPointer: {
+      animation: true,
+      label: {
+        show: true
+      }
+    },
+    splitLine: {
+      show: true,
+      lineStyle: {
+        type: 'dashed',
+        opacity: 0.2
+      }
+    }
+  },
+
+  series: [
+    {
+      type: 'themeRiver',
+      itemStyle: {
+        emphasis: {
+          shadowBlur: 20,
+          shadowColor: 'rgba(0, 0, 0, 0.8)'
+        }
+      },
+      data
+    }
+  ]
+})
 
 const transformData = (rawData) => {
   const topicAmountList = []
@@ -25,6 +73,7 @@ const transformData = (rawData) => {
       topicAmountList[topic][data.date] = _.get(topicAmountList[topic], data.date, 0) + 1
     }
   })
+  console.log(...topicAmountList)
   return _.concat(...topicAmountList)
 }
 
@@ -46,7 +95,7 @@ export default class AbsoluteTrend extends React.Component {
 
   @autobind
   drawRelativeTrend () {
-    const option = getOption(this.state.trend)
+    const option = getOption()
     this.myChart.setOption(option)
   }
 
