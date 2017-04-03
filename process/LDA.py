@@ -40,17 +40,16 @@ def __get_row_data():
     return files_info, raw_data
 
 
-def __vectorizer(raw_data):
+def vectorizer():
     print('extracting tf features')
     t0 = time.time()
-    vectorizer = CountVectorizer(max_df=0.8,
+    vectorized = CountVectorizer(max_df=0.8,
                                  min_df=0.01,
                                  stop_words=STOP_WORDS,
                                  analyzer='word',
                                  tokenizer=jieba.cut)
-    tf = vectorizer.fit_transform(raw_data)
-    print(f'finish in {time.time()-t0}s, got {len(vectorizer.get_feature_names())} words')
-    return vectorizer, tf
+    print(f'finish in {time.time()-t0}s')
+    return vectorized
 
 
 def __build_lda_model(tf):
@@ -78,9 +77,10 @@ def __set_lda_info_to_file_info(file_info, lda_model):
 
 if __name__ == '__main__':
     file_info, raw_data = __get_row_data()
-    vectorizer, tf = __vectorizer(raw_data)
+    vectorized = vectorizer()
+    tf = vectorized.fit_transform(raw_data)
     lda = __build_lda_model(tf)
-    topic_list = __topic_list(lda, vectorizer.get_feature_names())
+    topic_list = __topic_list(lda, vectorized.get_feature_names())
     __set_lda_info_to_file_info(file_info, lda.transform(tf))
     print('saving model')
     pickle.dump(pickle.dump, open(LDA_MODEL_PATH, 'wb'))
