@@ -3,6 +3,7 @@ import os
 import jieba
 import time
 import json
+import pickle
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 
@@ -11,6 +12,7 @@ RAW_DATA_DIR = os.path.join(BASE_DIR, 'raw_data')
 TOPIC_PATH = os.path.join(BASE_DIR, 'data/lda/topic.json')
 DOC_PATH = os.path.join(BASE_DIR, 'data/lda/doc.json')
 STOP_WORDS_PATH = os.path.join(BASE_DIR, 'process/stop_words.txt')
+LDA_MODEL_PATH = os.path.join(BASE_DIR, 'process/lda_model.pkl')
 
 STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_PATH, 'r', encoding='utf-8').readlines())
 STOP_WORDS.add('生物谷')
@@ -80,5 +82,6 @@ if __name__ == '__main__':
     topic_list = __topic_list(lda, vectorizer.get_feature_names())
     __set_lda_info_to_file_info(file_info, lda.transform(tf))
     print('saving model')
+    pickle.dump(pickle.dump, open(LDA_MODEL_PATH))
     json.dump(topic_list, open(TOPIC_PATH, 'w'), ensure_ascii=False)
     json.dump(file_info, open(DOC_PATH, 'w'), ensure_ascii=False)

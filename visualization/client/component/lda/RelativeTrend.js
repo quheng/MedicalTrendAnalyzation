@@ -83,7 +83,6 @@ const transformData = (rawData) => {
       }
     })
   })
-  console.log(topicAmountList)
   return _.concat(...topicAmountList.map(_.values))
 }
 

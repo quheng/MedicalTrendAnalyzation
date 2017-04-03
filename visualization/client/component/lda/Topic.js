@@ -9,8 +9,8 @@ import Loading from '../Loading'
 import { autobind } from 'react-decoration'
 import { checkStatus, serverAddress } from '../../util'
 
-const getOption = ({ topic }) => {
-  console.log(topic)
+const getOption = () => {
+  'use strict'
 }
 
 export default class AbsoluteTrend extends React.Component {
@@ -26,11 +26,11 @@ export default class AbsoluteTrend extends React.Component {
   }
 
   componentDidMount () {
-    this.myChart = echarts.init(this.refs.RelativeTrend)
+    this.myChart = echarts.init(this.refs.Topic)
   }
 
   @autobind
-  drawRelativeTrend () {
+  drawTopic () {
     const option = getOption(this.state)
     this.myChart.setOption(option)
   }
@@ -38,10 +38,10 @@ export default class AbsoluteTrend extends React.Component {
   render () {
     return <div
       className={styles.container}
-      ref='RelativeTrend'>
+      ref='Topic'>
       {_.isEmpty(this.state.trend) && _.isEmpty(this.state.topic)
         ? <Loading />
-        : this.drawRelativeTrend()}
+        : this.drawTopic()}
     </div>
   }
 }

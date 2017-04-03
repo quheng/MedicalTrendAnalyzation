@@ -29,7 +29,7 @@ const getOption = (trend) => {
   const calculateMA = getMaCalculator(trend.values)
   return {
     title: {
-      text: '绝对数量趋势',
+      text: '绝对趋势',
       left: 100
     },
     tooltip: {
