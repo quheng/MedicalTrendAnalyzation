@@ -15,7 +15,8 @@ const dateFormat = 'YYYY-MM'
 
 const getOption = ({topic, trend}) => ({
   title: {
-    text: '相对趋势'
+    text: '相对趋势',
+    left: 100
   },
   tooltip: {
     trigger: 'axis',
