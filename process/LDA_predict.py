@@ -1,27 +1,14 @@
-import os
+# -*- coding: utf-8 -*-
 import jieba
-import time
-import json
 import pickle
-from sklearn.feature_extraction.text import CountVectorizer
 
-test_file = """
-记者昨日从台州市人力社保局获悉，从4月1日起，我市新增调整22项医疗康复项目纳入基本医保支付范围。其中徒手平衡功能检查等13项医疗康复项目新增列入基本医疗保险支付范围，原基本医疗保险支付的言语能力评定（一般失语症检查）等9项医疗康复项目进行限定支付范围调整。
-具体来说，新增的13项医疗康复项目有徒手平衡功能检查、仪器平衡功能评定、手功能评定、手功能训练、轮椅功能训练、有氧训练、儿童听力障碍语言训练、职业功能训练、平衡功能训练、助听器选配试验、真耳分析、定向条件反射测定、失认失用评定。
-“此次我们还对言语能力评定（一般失语症检查）等9项医疗康复项目进行限定支付范围调整，这些项目原本就已纳入基本医疗保险支付，现在条件相对较宽。”市人力社保局医保处工作人员说。
-调整限定支付范围的9项医疗康复项目分别是言语能力评定(一般失语症检查)、言语能力评定(构音障碍检查)、言语能力评定(言语失用检查)、吞咽功能障碍评定、减重支持系统训练、电动起立床训练、关节松动训练(大关节)、康复评定、作业疗法。
-“这些新增医疗康复项目，兼顾了功能评定性项目和治疗性康复项目，体现了医疗康复的特点，也更贴近参保人员需求。”该工作人员介绍，此外，还兼顾了儿童和成人等不同人群的康复需求，涉及医疗康复的肢体、听力、语言等不同残疾类别。目的就是为了进一步提高参保人员医疗康复保障水平，切实降低参保人员的医疗费用负担。
-值得一提的是，这22种医疗康复项目中有2种项目是专门针对儿童的。其中，新增的“儿童听力障碍语言训练”的对象为6岁以下听力障碍儿童，由取得听觉口语师资格的人员开展，以个别化训练为主要方式，每周最多支付一次，每次不少于30分钟，支付不超过一年。另一种新增的“定向条件反射测定”限4周岁以下儿童。
-"""
-
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-LDA_MODEL_PATH = os.path.join(BASE_DIR, 'data/lda/lda_model.pkl')
+from util import VEC_MODEL_PATH
+from util import LDA_MODEL_PATH
 
 if __name__ == '__main__':
     print(LDA_MODEL_PATH)
     lda = pickle.load(open(LDA_MODEL_PATH, 'rb'))
-    vectorized = CountVectorizer(max_df=0.8,
-                                 min_df=0.01,
-                                 stop_words=STOP_WORDS,
-                                 analyzer='word',
-                                 tokenizer=jieba.cut)
+    vectorized = pickle.load(open(VEC_MODEL_PATH, 'rb'))
+    vectorized.tokenizer = jieba.cut
+    tf = vectorized.transform([test_file, test_file])
+    print(lda.transform(tf))
