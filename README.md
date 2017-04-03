@@ -61,8 +61,22 @@ now you can visit [http://0.0.0.0:2333](http://0.0.0.0:2333)
 Due to words relationship is too big to handle, just return words amount now.
 ```
 [
-    [words, amount]
+  [words, amount]
 ]
 ```
 
+### /lda-topic
+Topics and words included in each topic order by weight
+```
+[
+  [words]
+]
+```
 
+### /lda-doc
+Doc topics model
+```
+[
+  [weight]
+]
+```
