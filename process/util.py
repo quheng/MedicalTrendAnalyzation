@@ -5,6 +5,7 @@ RAW_DATA_DIR = os.path.join(BASE_DIR, 'raw_data')
 TOPIC_PATH = os.path.join(BASE_DIR, 'data/lda/topic.json')
 DOC_PATH = os.path.join(BASE_DIR, 'data/lda/doc.json')
 LDA_MODEL_PATH = os.path.join(BASE_DIR, 'data/lda/lda_model.pkl')
+VEC_MODEL_PATH = os.path.join(BASE_DIR, 'data/lda/vec_model.pkl')
 
 STOP_WORDS_PATH = os.path.join(BASE_DIR, 'process/stop_words.txt')
 

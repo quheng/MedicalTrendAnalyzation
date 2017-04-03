@@ -9,9 +9,10 @@ from sklearn.decomposition import LatentDirichletAllocation
 
 from util import RAW_DATA_DIR
 from util import STOP_WORDS
-from util import LDA_MODEL_PATH
 from util import DOC_PATH
 from util import TOPIC_PATH
+from util import VEC_MODEL_PATH
+from util import LDA_MODEL_PATH
 
 
 TOPICS_NUMBER = 4
@@ -79,6 +80,8 @@ if __name__ == '__main__':
     topic_list = __topic_list(lda, vectorized.get_feature_names())
     __set_lda_info_to_file_info(file_info, lda.transform(tf))
     print('saving model')
+    vectorized.tokenizer = None # we can not pickle jieba due to lock
     pickle.dump(lda, open(LDA_MODEL_PATH, 'wb'))
+    pickle.dump(vectorized, open(VEC_MODEL_PATH, 'wb'))
     json.dump(topic_list, open(TOPIC_PATH, 'w'), ensure_ascii=False)
     json.dump(file_info, open(DOC_PATH, 'w'), ensure_ascii=False)
