@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import styles from './Home.css'
 import WordsCloud from './WordsCloud'
 import AbsoluteTrend from './AbsoluteTrend'
+import RelativeTrend from './RelativeTrend'
 
 import { Menu, Icon } from 'antd'
 import { autobind } from 'react-decoration'
@@ -10,6 +11,7 @@ const SubMenu = Menu.SubMenu
 const FUNC = {
   ldaWordCloud: 'ldaWordCloud',
   absoluteTrend: 'absoluteTrend',
+  relativeTrend: 'relativeTrend',
   todo: 'todo'
 }
 
@@ -26,6 +28,7 @@ class Sider extends React.Component {
         <SubMenu key='lda' title={<span><Icon type='api' /><span>LDA</span></span>}>
           <Menu.Item key={FUNC.ldaWordCloud}>词云</Menu.Item>
           <Menu.Item key={FUNC.absoluteTrend}>绝对数量趋势</Menu.Item>
+          <Menu.Item key={FUNC.relativeTrend}>相对数量趋势</Menu.Item>
         </SubMenu>
         <SubMenu key='tot' title={<span><Icon type='rocket' /><span>TOT</span></span>}>
           <Menu.Item key='tot-todo'>敬请期待</Menu.Item>
@@ -50,6 +53,8 @@ class Home extends Component {
         return <WordsCloud />
       case FUNC.absoluteTrend:
         return <AbsoluteTrend />
+      case FUNC.relativeTrend:
+        return <RelativeTrend />
       default:
         return <div>敬请期待</div>
     }

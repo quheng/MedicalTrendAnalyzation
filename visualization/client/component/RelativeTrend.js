@@ -2,6 +2,7 @@ import React from 'react'
 import echarts from 'echarts'
 import _ from 'lodash'
 import fetch from 'isomorphic-fetch'
+import moment from 'moment'
 
 import styles from './AbsoluteTrend.css'
 import Loading from './Loading'
@@ -9,7 +10,13 @@ import Loading from './Loading'
 import { autobind } from 'react-decoration'
 import { checkStatus, serverAddress } from '../util'
 
-const getOption = (topic, data) => ({
+const rawDateFormat = 'YYYY-MM-DD'
+const dateFormat = 'YYYY-MM'
+
+const getOption = ({topic, trend}) => ({
+  title: {
+    text: '相对趋势'
+  },
   tooltip: {
     trigger: 'axis',
     axisPointer: {
@@ -23,7 +30,7 @@ const getOption = (topic, data) => ({
   },
 
   legend: {
-    data: [1, 2, 3, 4]  // todo
+    data: ['主题1', '主题2']
   },
 
   singleAxis: {
@@ -56,32 +63,35 @@ const getOption = (topic, data) => ({
           shadowColor: 'rgba(0, 0, 0, 0.8)'
         }
       },
-      data
+      data: trend
     }
   ]
 })
 
 const transformData = (rawData) => {
-  const topicAmountList = []
+  const topicAmountList = [{}, {}, {}, {}]
   rawData.forEach(data => {
     const lda = data.lda
     const topic = lda.indexOf(Math.max(...lda))
-    if (_.isEmpty(topicAmountList[topic])) {
-      topicAmountList[topic] = {}
-      topicAmountList[topic][data.date] = [data.date, 1, topic]
-    } else {
-      topicAmountList[topic][data.date] = _.get(topicAmountList[topic], data.date, 0) + 1
-    }
+    const date = moment(data.date, rawDateFormat).format(dateFormat)
+    topicAmountList.forEach((topicAmount, index) => {
+      if (index === topic) {
+        topicAmount[date] = [date, _.get(topicAmount, date, ['', 0, ''])[1] + 1, '主题' + (index + 1)]
+      } else {
+        topicAmount[date] = [date, _.get(topicAmount, date, ['', 0, ''])[1], '主题' + (index + 1)]
+      }
+    })
   })
-  console.log(...topicAmountList)
-  return _.concat(...topicAmountList)
+  console.log(topicAmountList)
+  return _.concat(...topicAmountList.map(_.values))
 }
 
 export default class AbsoluteTrend extends React.Component {
   constructor () {
     super()
     this.state = {
-      trend: []
+      trend: [],
+      topic: []
     }
     fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
       .then(checkStatus)
@@ -90,12 +100,12 @@ export default class AbsoluteTrend extends React.Component {
   }
 
   componentDidMount () {
-    this.myChart = echarts.init(this.refs.AbsoluteTrend)
+    this.myChart = echarts.init(this.refs.RelativeTrend)
   }
 
   @autobind
   drawRelativeTrend () {
-    const option = getOption()
+    const option = getOption(this.state)
     this.myChart.setOption(option)
   }
 
