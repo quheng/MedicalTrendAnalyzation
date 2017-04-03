@@ -30,4 +30,10 @@ apiRouter.get('/lda-doc', (req, res) => {
   res.json(ldaDocInfo)
 })
 
+apiRouter.post('/lda-predict', (req, res) => {
+  console.log(req)
+  console.log(req.body)
+  res.send(req.body)
+})
+
 export default apiRouter
