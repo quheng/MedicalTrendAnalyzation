@@ -79,6 +79,6 @@ if __name__ == '__main__':
     topic_list = __topic_list(lda, vectorized.get_feature_names())
     __set_lda_info_to_file_info(file_info, lda.transform(tf))
     print('saving model')
-    pickle.dump(pickle.dump, open(LDA_MODEL_PATH, 'wb'))
+    pickle.dump(lda, open(LDA_MODEL_PATH, 'wb'))
     json.dump(topic_list, open(TOPIC_PATH, 'w'), ensure_ascii=False)
     json.dump(file_info, open(DOC_PATH, 'w'), ensure_ascii=False)
