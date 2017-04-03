@@ -12,7 +12,8 @@ import { checkStatus, serverAddress } from '../../util'
 const getOption = ({ topic }) => (
   {
     title: {
-      text: '主题分析'
+      text: '主题分析',
+      left: 100
     },
     tooltip: {
       trigger: 'item',
@@ -43,10 +44,8 @@ const getOption = ({ topic }) => (
 
 const transformData = (rawData) => {
   const links = []
-  const nodes = _.map(rawData, (value, index) => (`主题${index + 1}`))
-
-  rawData.forEach((index, topic) => {
-    nodes.concat(...topic)
+  const nodes = _.uniq(_.concat(_.map(rawData, (value, index) => (`主题${index + 1}`)), ...rawData))
+  rawData.forEach((topic, index) => {
     const source = `主题${index + 1}`
     topic.forEach((word) => {
       links.push({
@@ -56,9 +55,11 @@ const transformData = (rawData) => {
       })
     })
   })
-  console.log(links)
-  console.log(nodes)
-  return {links, nodes}
+
+  return {
+    links,
+    nodes: nodes.map((node) => ({name: node}))
+  }
 }
 
 export default class AbsoluteTrend extends React.Component {
@@ -80,6 +81,8 @@ export default class AbsoluteTrend extends React.Component {
   @autobind
   drawTopic () {
     const option = getOption(this.state)
+    console.log(JSON.stringify(this.state.topic.links))
+    console.log(JSON.stringify(this.state.topic.nodes))
     this.myChart.setOption(option)
   }
 
