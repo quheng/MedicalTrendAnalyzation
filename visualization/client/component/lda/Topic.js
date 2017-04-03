@@ -9,8 +9,56 @@ import Loading from '../Loading'
 import { autobind } from 'react-decoration'
 import { checkStatus, serverAddress } from '../../util'
 
-const getOption = () => {
-  'use strict'
+const getOption = ({ topic }) => (
+  {
+    title: {
+      text: '主题分析'
+    },
+    tooltip: {
+      trigger: 'item',
+      triggerOn: 'mousemove'
+    },
+    series: [
+      {
+        type: 'sankey',
+        layout: 'none',
+        data: topic.nodes,
+        links: topic.links,
+        itemStyle: {
+          normal: {
+            borderWidth: 1,
+            borderColor: '#aaa'
+          }
+        },
+        lineStyle: {
+          normal: {
+            color: 'source',
+            curveness: 0.5
+          }
+        }
+      }
+    ]
+  }
+)
+
+const transformData = (rawData) => {
+  const links = []
+  const nodes = _.map(rawData, (value, index) => (`主题${index + 1}`))
+
+  rawData.forEach((index, topic) => {
+    nodes.concat(...topic)
+    const source = `主题${index + 1}`
+    topic.forEach((word) => {
+      links.push({
+        source,
+        target: word,
+        value: 1
+      })
+    })
+  })
+  console.log(links)
+  console.log(nodes)
+  return {links, nodes}
 }
 
 export default class AbsoluteTrend extends React.Component {
@@ -22,7 +70,7 @@ export default class AbsoluteTrend extends React.Component {
     fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
-      .then((topic) => this.setState({topic}))
+      .then((topic) => this.setState({topic: transformData(topic)}))
   }
 
   componentDidMount () {
