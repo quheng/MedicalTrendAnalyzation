@@ -67,7 +67,7 @@ const getOption = ({topic, trend}) => ({
 })
 
 const transformData = (rawData) => {
-  const topicAmountList = [{}, {}, {}, {}, {}, {}, {}, {}] // todo refactor
+  const topicAmountList = [{}, {}, {}, {}, {}] // todo refactor
   rawData.forEach(data => {
     const lda = data.lda
     const topic = lda.indexOf(Math.max(...lda))
@@ -81,6 +81,7 @@ const transformData = (rawData) => {
       }
     })
   })
+
   return _.concat(...topicAmountList.map(_.values))
 }
 
