@@ -67,11 +67,12 @@ const getOption = ({topic, trend}) => ({
 })
 
 const transformData = (rawData) => {
-  const topicAmountList = [{}, {}, {}, {}]
+  const topicAmountList = [{}, {}, {}, {}, {}, {}, {}, {}] // todo refactor
   rawData.forEach(data => {
     const lda = data.lda
     const topic = lda.indexOf(Math.max(...lda))
     const date = moment(data.date, rawDateFormat).format(dateFormat)
+
     topicAmountList.forEach((topicAmount, index) => {
       if (index === topic) {
         topicAmount[date] = [date, _.get(topicAmount, date, ['', 0, ''])[1] + 1, `主题${index + 1}`]
@@ -107,6 +108,7 @@ export default class AbsoluteTrend extends React.Component {
   @autobind
   drawRelativeTrend () {
     const option = getOption(this.state)
+    console.log(option)
     this.myChart.setOption(option)
   }
 
