@@ -36,8 +36,7 @@ const uint8ArrayToString = (data) => {
 }
 
 apiRouter.post('/lda-predict', (req, res) => {
-  console.log(req.body)
-  const process = spawn('python', ['../process/LDA_predict.py', req.body])
+  const process = spawn('python', ['../process/LDA_predict.py', ...req.body])
   process.stdout.on('data', function (data) {
     'use strict'
     res.send(uint8ArrayToString(data))
