@@ -10,5 +10,5 @@ if __name__ == '__main__':
     lda = pickle.load(open(LDA_MODEL_PATH, 'rb'))
     vectorized = pickle.load(open(VEC_MODEL_PATH, 'rb'))
     vectorized.tokenizer = jieba.cut
-    tf = vectorized.transform([sys.argv[1]])
-    print(lda.transform(tf)[0])
+    tf = vectorized.transform(sys.argv[1:])
+    print(lda.transform(tf))
