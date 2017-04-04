@@ -143,18 +143,20 @@ export default class LdaAnalyze extends React.Component {
 
   componentDidMount () {
     console.log(this)
-    this.myChart = echarts.init(this.refs.LdaAnalyze)
+    console.log(this)
   }
 
   @autobind
   drawAnalyze () {
     console.log(this)
+    this.myChart = echarts.init(this.refs.LdaAnalyze)
     const option = getOption()
     this.myChart.setOption(option)
   }
 
   render () {
     return <div
+      ref='LdaAnalyze'
       style={{display: 'flex', 'flexDirection': 'row'}}
       className={styles.container}
     >
@@ -162,8 +164,7 @@ export default class LdaAnalyze extends React.Component {
       {/* style={{flexGrow: 1, display:'flex', 'flexDirection':'row', justifyContent: 'center'}} */}
       {/* /> */}
       <div
-        style={{flexGrow: 1}}
-        ref='LdaAnalyze' />
+        style={{flexGrow: 1}} />
       {this.drawAnalyze()}
     </div>
   }

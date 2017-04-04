@@ -145,12 +145,9 @@ export default class AbsoluteTrend extends React.Component {
       .then((doc) => this.setState({trend: transformData(doc)}))
   }
 
-  componentDidMount () {
-    this.myChart = echarts.init(this.refs.AbsoluteTrend)
-  }
-
   @autobind
   drawAbsoluteTrend () {
+    this.myChart = echarts.init(this.refs.AbsoluteTrend)
     const option = getOption(this.state.trend)
     this.myChart.setOption(option)
   }
