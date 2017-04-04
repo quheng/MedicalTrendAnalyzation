@@ -17,7 +17,8 @@ class InputForm extends React.Component {
     this.props.form.validateFields()
   }
 
-  handleSubmit = (e) => {
+  @autobind
+  handleSubmit (e) {
     e.preventDefault()
     this.props.form.validateFields((err, values) => {
       if (!err) {
