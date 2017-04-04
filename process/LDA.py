@@ -15,8 +15,8 @@ from util import VEC_MODEL_PATH
 from util import LDA_MODEL_PATH
 
 
-TOPICS_NUMBER = 4
-TOPICS_WORD = 6
+TOPICS_NUMBER = 5
+TOPICS_WORD = 7
 
 def __get_row_data():
     """
