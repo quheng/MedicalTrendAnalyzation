@@ -52,7 +52,6 @@ export default class Analyze extends React.Component {
   @autobind
   drawAnalyze () {
     const option = getOption(this.state)
-    console.log(this)
     this.myChart.setOption(option)
   }
 
