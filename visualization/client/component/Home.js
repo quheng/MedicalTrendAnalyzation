@@ -4,7 +4,7 @@ import LdaWordsCloud from './lda/WordsCloud'
 import LdaAbsoluteTrend from './lda/AbsoluteTrend'
 import LdaRelativeTrend from './lda/RelativeTrend'
 import LdaTopic from './lda/Topic'
-import LdaAnalyze from './lda/LdaAnalyze'
+import LdaAnalyze from './lda/Analyze'
 
 import { Menu, Icon } from 'antd'
 import { autobind } from 'react-decoration'
@@ -48,7 +48,7 @@ class Home extends Component {
   constructor () {
     super()
     this.state = {
-      func: FUNC.ldaWordCloud
+      func: FUNC.ldaAnalyze
     }
   }
 
