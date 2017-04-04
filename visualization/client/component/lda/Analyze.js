@@ -79,7 +79,6 @@ export default class Analyze extends React.Component {
   }
 
   render () {
-    console.log(this.state)
     return <div className={styles.container}>
       <div className={styles.dynamicFieldSet}>
         <DynamicFieldSet analyze={this.analyze} />
