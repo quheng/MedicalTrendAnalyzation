@@ -58,11 +58,82 @@ class InputForm extends React.Component {
   }
 }
 
-const getOption = () => {
-  'use strict'
-}
+export const WrappedInputForm = Form.create()(InputForm)
 
-export default class AbsoluteTrend extends React.Component {
+const getOption = () => ({
+  title: {
+    text: '自定义雷达图'
+  },
+  radar: [
+    {
+      indicator: [
+        { text: '指标一' },
+        { text: '指标二' },
+        { text: '指标三' },
+        { text: '指标四' }
+      ],
+      center: ['25%', '50%'],
+      radius: 120,
+      startAngle: 90,
+      splitNumber: 4,
+      shape: 'circle',
+      name: {
+        formatter: '【{value}】',
+        textStyle: {
+          color: '#72ACD1'
+        }
+      },
+      splitArea: {
+        areaStyle: {
+          color: ['rgba(114, 172, 209, 0.2)',
+            'rgba(114, 172, 209, 0.4)', 'rgba(114, 172, 209, 0.6)',
+            'rgba(114, 172, 209, 0.8)', 'rgba(114, 172, 209, 1)'],
+          shadowColor: 'rgba(0, 0, 0, 0.3)',
+          shadowBlur: 10
+        }
+      },
+      axisLine: {
+        lineStyle: {
+          color: 'rgba(255, 255, 255, 0.5)'
+        }
+      },
+      splitLine: {
+        lineStyle: {
+          color: 'rgba(255, 255, 255, 0.5)'
+        }
+      }
+    }
+  ],
+  series: [
+    {
+      name: '雷达图',
+      type: 'radar',
+      itemStyle: {
+        emphasis: {
+          // color: 各异,
+          lineStyle: {
+            width: 4
+          }
+        }
+      },
+      data: [
+        {
+          value: [100, 8, 0.40, -80],
+          name: '图一',
+          symbol: 'rect',
+          symbolSize: 5,
+          lineStyle: {
+            normal: {
+              type: 'dashed'
+            }
+          }
+        }
+      ]
+    }
+  ]
+})
+
+export default class LdaAnalyze extends React.Component {
   constructor () {
     super()
     this.state = {
@@ -71,18 +142,29 @@ export default class AbsoluteTrend extends React.Component {
   }
 
   componentDidMount () {
-    this.myChart = echarts.init(this.refs.RelativeTrend)
+    console.log(this)
+    this.myChart = echarts.init(this.refs.LdaAnalyze)
   }
 
   @autobind
-  drawRelativeTrend () {
-    const option = getOption(this.state)
+  drawAnalyze () {
+    console.log(this)
+    const option = getOption()
     this.myChart.setOption(option)
   }
 
   render () {
-    return <div styles={styles.container}>
-      <InputForm />
+    return <div
+      style={{display: 'flex', 'flexDirection': 'row'}}
+      className={styles.container}
+    >
+      {/* <WrappedInputForm */}
+      {/* style={{flexGrow: 1, display:'flex', 'flexDirection':'row', justifyContent: 'center'}} */}
+      {/* /> */}
+      <div
+        style={{flexGrow: 1}}
+        ref='LdaAnalyze' />
+      {this.drawAnalyze()}
     </div>
   }
 }

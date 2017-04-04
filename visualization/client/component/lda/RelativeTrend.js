@@ -29,11 +29,9 @@ const getOption = ({topic, trend}) => ({
       }
     }
   },
-
   legend: {
     data: topic.map((words, index) => `主题${index + 1}`)
   },
-
   singleAxis: {
     top: 50,
     bottom: 50,
@@ -54,7 +52,6 @@ const getOption = ({topic, trend}) => ({
       }
     }
   },
-
   series: [
     {
       type: 'themeRiver',

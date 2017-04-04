@@ -81,8 +81,6 @@ export default class AbsoluteTrend extends React.Component {
   @autobind
   drawTopic () {
     const option = getOption(this.state)
-    console.log(JSON.stringify(this.state.topic.links))
-    console.log(JSON.stringify(this.state.topic.nodes))
     this.myChart.setOption(option)
   }
 
