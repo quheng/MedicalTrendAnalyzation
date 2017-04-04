@@ -4,68 +4,15 @@ import _ from 'lodash'
 import fetch from 'isomorphic-fetch'
 import styles from './Main.css'
 import Loading from '../Loading'
+import DynamicFieldSet from './DynamicFieldSet'
 
 import { autobind } from 'react-decoration'
-import { Form, Input, Button } from 'antd'
 import { checkStatus, serverAddress } from '../../util'
-
-const FormItem = Form.Item
-
-function hasErrors (fieldsError) {
-  return Object.keys(fieldsError).some(field => fieldsError[field])
-}
-
-class InputForm extends React.Component {
-  componentDidMount () {
-    this.props.form.validateFields()
-  }
-
-  @autobind
-  handleSubmit (e) {
-    e.preventDefault()
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values)
-      }
-    })
-  }
-
-  render () {
-    const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form
-
-    const textError = isFieldTouched('text') && getFieldError('text')
-
-    return (
-      <Form layout='vertical' onSubmit={this.handleSubmit}>
-        <FormItem
-          validateStatus={textError ? 'error' : ''}
-          help={textError || ''}
-        >
-          {getFieldDecorator(' text', {
-            rules: [{ required: true, message: '请输入文章内容' }]
-          })(
-            <Input placeholder='请输入文章内容' />
-          )}
-        </FormItem>
-        <FormItem>
-          <Button
-            type='primary'
-            htmlType='submit'
-            disabled={hasErrors(getFieldsError())}
-          >
-            分析
-          </Button>
-        </FormItem>
-      </Form>
-    )
-  }
-}
-
-const WrappedInputForm = Form.create()(InputForm)
 
 const getOption = ({ topic, result }) => ({
   title: {
-    text: '分析结果'
+    text: '分析结果',
+    left: 100
   },
   tooltip: {},
   legend: {
@@ -102,16 +49,19 @@ export default class Analyze extends React.Component {
     this.myChart = echarts.init(this.refs.Analyze)
   }
 
+  @autobind
   drawAnalyze () {
     const option = getOption(this.state)
+    console.log(this)
     this.myChart.setOption(option)
   }
 
   render () {
-    return <div
-      className={styles.container}>
-      <WrappedInputForm />
-      <div ref='Analyze' style={{padding: '-100px', width: '80%', height: '100%'}}>
+    return <div className={styles.container}>
+      <div className={styles.dynamicFieldSet}>
+        <DynamicFieldSet />
+      </div>
+      <div ref='Analyze' style={{width: '60%', height: '100%'}}>
         {_.isEmpty(this.state.topic)
           ? <Loading />
           : this.drawAnalyze()}

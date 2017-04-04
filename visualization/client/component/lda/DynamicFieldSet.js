@@ -1,38 +1,39 @@
 import React from 'react'
 import { Form, Input, Icon, Button } from 'antd'
+import { autobind } from 'react-decoration'
+
 const FormItem = Form.Item
 
 let uuid = 0
 class DynamicFieldSet extends React.Component {
-  remove = (k) => {
+  componentDidMount () {
+    this.add()
+  }
+
+  @autobind
+  remove (k) {
     const { form } = this.props
-    // can use data-binding to get
     const keys = form.getFieldValue('keys')
-    // We need at least one passenger
     if (keys.length === 1) {
       return
     }
-
-    // can use data-binding to set
     form.setFieldsValue({
       keys: keys.filter(key => key !== k)
     })
   }
 
-  add = () => {
+  @autobind
+  add () {
     uuid++
     const { form } = this.props
-    // can use data-binding to get
     const keys = form.getFieldValue('keys')
     const nextKeys = keys.concat(uuid)
-    // can use data-binding to set
-    // important! notify form to detect changes
     form.setFieldsValue({
       keys: nextKeys
     })
   }
 
-  handleSubmit = (e) => {
+  handleSubmit (e) {
     e.preventDefault()
     this.props.form.validateFields((err, values) => {
       if (!err) {
@@ -65,7 +66,7 @@ class DynamicFieldSet extends React.Component {
       return (
         <FormItem
           {...(index === 0 ? formItemLayout : formItemLayoutWithOutLabel)}
-          label={index === 0 ? 'Passengers' : ''}
+          label={index === 0 ? '文章列表' : ''}
           required={false}
           key={k}
         >
@@ -74,17 +75,18 @@ class DynamicFieldSet extends React.Component {
             rules: [{
               required: true,
               whitespace: true,
-              message: "Please input passenger's name or delete this field."
+              message: '请输入文章内容或删除该文章'
             }]
           })(
-            <Input placeholder='passenger name' style={{ width: '60%', marginRight: 8 }} />
+            <Input placeholder='文章内容' type='textarea' rows={4} style={{ width: '350px' }} />
           )}
-          <Icon
-            className='dynamic-delete-button'
-            type='minus-circle-o'
+
+          <Button
+            icon='delete'
             disabled={keys.length === 1}
-            onClick={() => this.remove(k)}
-          />
+            onClick={() => this.remove(k)}>
+            删除该文章
+          </Button>
         </FormItem>
       )
     })
@@ -93,15 +95,15 @@ class DynamicFieldSet extends React.Component {
         {formItems}
         <FormItem {...formItemLayoutWithOutLabel}>
           <Button type='dashed' onClick={this.add} style={{ width: '60%' }}>
-            <Icon type='plus' /> Add field
+            <Icon type='plus' /> 添加文章
           </Button>
         </FormItem>
         <FormItem {...formItemLayoutWithOutLabel}>
-          <Button type='primary' htmlType='submit' size='large'>Submit</Button>
+          <Button type='primary' htmlType='submit' size='large'>分析</Button>
         </FormItem>
       </Form>
     )
   }
 }
 
-export const WrappedDynamicFieldSet = Form.create()(DynamicFieldSet)
+export default Form.create()(DynamicFieldSet)
