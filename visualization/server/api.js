@@ -1,7 +1,7 @@
 import express from 'express'
 import _ from 'lodash'
 import fs from 'fs'
-import { exec } from 'child_process'
+import { spawn } from 'child_process'
 
 const wordsRelationshipPath = '../data/words_relationship.json'
 const ldaTopicPath = '../data/lda/topic.json'
@@ -31,19 +31,15 @@ apiRouter.get('/lda-doc', (req, res) => {
   res.json(ldaDocInfo)
 })
 
-const replaceAll = (str, search, replacement) => {
-  return str.replace(new RegExp(search, 'g'), replacement)
+const uint8ArrayToString = (data) => {
+  return String.fromCharCode.apply(null, data)
 }
 
 apiRouter.post('/lda-predict', (req, res) => {
-  const cmd = `python ../process/LDA_predict.py "${replaceAll(req.body, '"', ' ')}"`
-  exec(cmd, function (error, stdout, stderr) {
-    if (error) {
-      console.error('stderr : ' + stderr)
-      res.status(400).send('Bad Request')
-    } else {
-      res.send(stdout)
-    }
+  const process = spawn('python', ['../process/LDA_predict.py', req.body])
+  process.stdout.on('data', function (data) {
+    'use strict'
+    res.send(uint8ArrayToString(data))
   })
 })
 
