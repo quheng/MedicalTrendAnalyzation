@@ -1,10 +1,13 @@
 import React from 'react'
 import echarts from 'echarts'
-
+import _ from 'lodash'
+import fetch from 'isomorphic-fetch'
 import styles from './Main.css'
+import Loading from '../Loading'
 
 import { autobind } from 'react-decoration'
 import { Form, Input, Button } from 'antd'
+import { checkStatus, serverAddress } from '../../util'
 
 const FormItem = Form.Item
 
@@ -60,94 +63,47 @@ class InputForm extends React.Component {
 
 const WrappedInputForm = Form.create()(InputForm)
 
-const getOption = () => ({
+const getOption = ({ topic, result }) => ({
   title: {
-    text: '分析结果',
-    left: 100,
-    top: 100
+    text: '分析结果'
   },
-  radar: [
-    {
-      left: 100,
-      indicator: [
-        { text: '指标一' },
-        { text: '指标二' },
-        { text: '指标三' },
-        { text: '指标四' }
-      ],
-      center: ['25%', '50%'],
-      radius: 120,
-      startAngle: 90,
-      splitNumber: 4,
-      shape: 'circle',
-      name: {
-        formatter: '【{value}】',
-        textStyle: {
-          color: '#72ACD1'
-        }
-      },
-      splitArea: {
-        areaStyle: {
-          color: ['rgba(114, 172, 209, 0.2)',
-            'rgba(114, 172, 209, 0.4)', 'rgba(114, 172, 209, 0.6)',
-            'rgba(114, 172, 209, 0.8)', 'rgba(114, 172, 209, 1)'],
-          shadowColor: 'rgba(0, 0, 0, 0.3)',
-          shadowBlur: 10
-        }
-      },
-      axisLine: {
-        lineStyle: {
-          color: 'rgba(255, 255, 255, 0.5)'
-        }
-      },
-      splitLine: {
-        lineStyle: {
-          color: 'rgba(255, 255, 255, 0.5)'
-        }
-      }
-    }
-  ],
-  series: [
-    {
-      name: '雷达图',
-      type: 'radar',
-      itemStyle: {
-        emphasis: {
-          // color: 各异,
-          lineStyle: {
-            width: 4
-          }
-        }
-      },
-      data: [
-        {
-          value: [100, 8, 0.40, -80],
-          name: '图一',
-          symbol: 'rect',
-          symbolSize: 5,
-          lineStyle: {
-            normal: {
-              type: 'dashed'
-            }
-          }
-        }
-      ]
-    }
-  ]
+  tooltip: {},
+  legend: {
+    data: ['预算分配（Allocated Budget）']
+  },
+  radar: {
+    indicator: topic
+  },
+  series: [{
+    name: '预算 vs 开销（Budget vs spending）',
+    type: 'radar',
+    data: result
+  }]
 })
+
+const transformData = (rawData) => {
+  return _.map(rawData, (value, index) => ({name: `主题${index + 1}`}))
+}
 
 export default class Analyze extends React.Component {
   constructor () {
     super()
     this.state = {
-      trend: []
+      trend: [],
+      result: []
     }
+    fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
+      .then(checkStatus)
+      .then((res) => (res.json()))
+      .then((topic) => this.setState({topic: transformData(topic)}))
   }
 
   componentDidMount () {
     this.myChart = echarts.init(this.refs.Analyze)
-    const option = getOption()
-    console.log(option)
+  }
+
+  drawAnalyze () {
+    const option = getOption(this.state)
     this.myChart.setOption(option)
   }
 
@@ -155,7 +111,11 @@ export default class Analyze extends React.Component {
     return <div
       className={styles.container}>
       <WrappedInputForm />
-      <div ref='Analyze' style={{padding: '-100px', width: '20%', height: '100%'}} />
+      <div ref='Analyze' style={{padding: '-100px', width: '80%', height: '100%'}}>
+        {_.isEmpty(this.state.topic)
+          ? <Loading />
+          : this.drawAnalyze()}
+      </div>
     </div>
   }
 }
