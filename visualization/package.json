@@ -19,7 +19,8 @@
   "standard": {
     "parser": "babel-eslint",
     "ignore": [
-      "public"
+      "public",
+      "lib"
     ]
   },
   "devDependencies": {
