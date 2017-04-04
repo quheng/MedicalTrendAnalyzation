@@ -9,14 +9,14 @@ import DynamicFieldSet from './DynamicFieldSet'
 import { autobind } from 'react-decoration'
 import { checkStatus, serverAddress } from '../../util'
 
-const getOption = ({ topic, result }) => ({
+const getOption = ({ topic, results }) => ({
   title: {
     text: '分析结果',
     left: 100
   },
   tooltip: {},
   legend: {
-    data: ['预算分配（Allocated Budget）']
+    data: results.map((result, index) => `文章 ${index + 1}`)
   },
   radar: {
     indicator: topic
@@ -24,7 +24,7 @@ const getOption = ({ topic, result }) => ({
   series: [{
     name: '预算 vs 开销（Budget vs spending）',
     type: 'radar',
-    data: result
+    data: results.map((result, index) => ({name: `文章 ${index + 1}`, value: result}))
   }]
 })
 
@@ -37,7 +37,7 @@ export default class Analyze extends React.Component {
     super()
     this.state = {
       trend: [],
-      result: []
+      results: []
     }
     fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
       .then(checkStatus)
@@ -51,6 +51,13 @@ export default class Analyze extends React.Component {
 
   @autobind
   analyze (articleList) {
+    this.myChart.showLoading({
+      text: '分析中',
+      color: '#5CACEE',
+      textColor: '#000',
+      maskColor: 'rgba(255, 255, 255, 0.8)',
+      zlevel: 0
+    })
     fetch(`${serverAddress}/lda-predict`, {
       method: 'POST',
       body: JSON.stringify(articleList),
@@ -58,8 +65,11 @@ export default class Analyze extends React.Component {
         'Content-Type': 'application/json'
       }
     }).then(checkStatus)
-      .then((res) => (res.text()))
-      .then((result) => { this.setState({...this.state, result}) })
+      .then((res) => (res.json()))
+      .then((results) => {
+        this.myChart.hideLoading()
+        this.setState({...this.state, results})
+      })
   }
 
   @autobind
