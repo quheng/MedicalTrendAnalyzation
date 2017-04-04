@@ -42,11 +42,24 @@ export default class Analyze extends React.Component {
     fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
-      .then((topic) => this.setState({topic: transformData(topic)}))
+      .then((topic) => this.setState({...this.state, topic: transformData(topic)}))
   }
 
   componentDidMount () {
     this.myChart = echarts.init(this.refs.Analyze)
+  }
+
+  @autobind
+  analyze (articleList) {
+    fetch(`${serverAddress}/lda-predict`, {
+      method: 'POST',
+      body: JSON.stringify(articleList),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(checkStatus)
+      .then((res) => (res.text()))
+      .then((result) => { this.setState({...this.state, result}) })
   }
 
   @autobind
@@ -56,9 +69,10 @@ export default class Analyze extends React.Component {
   }
 
   render () {
+    console.log(this.state)
     return <div className={styles.container}>
       <div className={styles.dynamicFieldSet}>
-        <DynamicFieldSet />
+        <DynamicFieldSet analyze={this.analyze} />
       </div>
       <div ref='Analyze' style={{width: '60%', height: '100%'}}>
         {_.isEmpty(this.state.topic)

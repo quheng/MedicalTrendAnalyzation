@@ -72,16 +72,6 @@ export default class Topic extends React.Component {
       .then(checkStatus)
       .then((res) => (res.json()))
       .then((topic) => this.setState({topic: transformData(topic)}))
-
-    fetch(`${serverAddress}/lda-predict`, {
-      method: 'POST',
-      body: JSON.stringify([]),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(checkStatus)
-      .then((res) => (res.json()))
-      .then((topic) => { console.log(topic) })
   }
 
   componentDidMount () {
