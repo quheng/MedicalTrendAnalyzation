@@ -33,6 +33,7 @@ class DynamicFieldSet extends React.Component {
     })
   }
 
+  @autobind
   handleSubmit (e) {
     e.preventDefault()
     this.props.form.validateFields((err, values) => {
@@ -99,7 +100,7 @@ class DynamicFieldSet extends React.Component {
           </Button>
         </FormItem>
         <FormItem {...formItemLayoutWithOutLabel}>
-          <Button type='primary' htmlType='submit' size='large'>分析</Button>
+          <Button type='primary' htmlType='submit' size='large'>主题分析</Button>
         </FormItem>
       </Form>
     )
