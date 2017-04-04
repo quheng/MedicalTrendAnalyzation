@@ -4,6 +4,7 @@ import LdaWordsCloud from './lda/WordsCloud'
 import LdaAbsoluteTrend from './lda/AbsoluteTrend'
 import LdaRelativeTrend from './lda/RelativeTrend'
 import LdaTopic from './lda/Topic'
+import LdaAnalyze from './lda/LdaAnalyze'
 
 import { Menu, Icon } from 'antd'
 import { autobind } from 'react-decoration'
@@ -14,6 +15,7 @@ const FUNC = {
   ldaAbsoluteTrend: 'ldaAbsoluteTrend',
   ldaRelativeTrend: 'ldaRelativeTrend',
   ldaTopic: 'ldaTopic',
+  ldaAnalyze: 'ldaAnalyze',
   todo: 'todo'
 }
 
@@ -32,6 +34,7 @@ class Sider extends React.Component {
           <Menu.Item key={FUNC.ldaTopic}>主题关系</Menu.Item>
           <Menu.Item key={FUNC.ldaAbsoluteTrend}>绝对数量趋势</Menu.Item>
           <Menu.Item key={FUNC.ldaRelativeTrend}>相对数量趋势</Menu.Item>
+          <Menu.Item key={FUNC.ldaAnalyze}>文章主题分析</Menu.Item>
         </SubMenu>
         <SubMenu key='tot' title={<span><Icon type='rocket' /><span>TOT</span></span>}>
           <Menu.Item key='tot-todo'>敬请期待</Menu.Item>
@@ -60,6 +63,8 @@ class Home extends Component {
         return <LdaRelativeTrend />
       case FUNC.ldaTopic:
         return <LdaTopic />
+      case FUNC.ldaAnalyze:
+        return <LdaAnalyze />
       default:
         return <div>敬请期待</div>
     }
