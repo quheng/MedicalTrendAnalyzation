@@ -3,7 +3,7 @@ import echarts from 'echarts'
 import _ from 'lodash'
 import fetch from 'isomorphic-fetch'
 
-import styles from './AbsoluteTrend.css'
+import styles from './Main.css'
 import Loading from '../Loading'
 
 import { autobind } from 'react-decoration'

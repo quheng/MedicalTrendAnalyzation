@@ -3,7 +3,7 @@ import fetch from 'isomorphic-fetch'
 import WordCloud from 'react-d3-cloud'
 import _ from 'lodash'
 import Loading from '../Loading'
-import styles from './WordsCloud.css'
+import styles from './Main.css'
 
 import { autobind } from 'react-decoration'
 import { checkStatus, serverAddress } from '../../util'
