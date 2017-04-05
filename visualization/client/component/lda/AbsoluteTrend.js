@@ -36,6 +36,7 @@ const getMaCalculator = (values) => (dayCount) => {
 
 const getOption = (trend) => {
   const calculateMA = getMaCalculator(trend.values)
+  const legend = ['月线', 'MA3', 'MA5']
   return {
     title: {
       text: '绝对趋势',
@@ -48,7 +49,7 @@ const getOption = (trend) => {
       }
     },
     legend: {
-      data: ['月线', 'MA3', 'MA5']
+      data: legend
     },
     grid: {
       left: '10%',
@@ -118,6 +119,8 @@ const getOption = (trend) => {
   }
 }
 
+const topicName = (index) => (`主题${index + 1}`)
+
 const transformData = (rawData) => {
   const totalTrend = {}
   const topicTrend = []
@@ -136,19 +139,18 @@ const transformData = (rawData) => {
   })
 
   const categoryData = []
-  const values = []
-  const topicValues = []
+  const topicsName = topicTrend.map((topic, index) => (topicName(index)))
+  const topicValues = {}
+  topicsName.forEach(topicName => { topicValues[topicName] = [] })
 
   _.forIn(totalTrend, (totalAmount, date) => {
     categoryData.push(date)
-    values.push(totalAmount)
-    topicValues.push(topicTrend.map(topic => (
-      _.get(topic, date, 0) / totalAmount
-    )))
+    topicTrend.forEach((topic, index) => {
+      topicValues[topicName(index)].push(_.get(topic, date, 0) / totalAmount)
+    })
   })
-
-  const topic = topicTrend.map((topic, index) => (`主题${index + 1}`))
-  return {categoryData, topicValues, topic}
+  console.log(topicValues)
+  return {categoryData, topicValues, topicsName}
 }
 
 export default class AbsoluteTrend extends React.Component {
@@ -158,7 +160,7 @@ export default class AbsoluteTrend extends React.Component {
       categoryData: [],
       topicValues: [],
       checkedList: [],
-      topic: [],
+      topics: [],
       indeterminate: true,
       checkAll: false
     }
@@ -172,13 +174,13 @@ export default class AbsoluteTrend extends React.Component {
           categoryData: data.categoryData,
           topicValues: data.topicValues,
           checkedList: [data.topic[0]],
-          topic: data.topic
+          topics: data.topics
         })
       }) // todo draw
   }
 
   isDataLoaded () {
-    return !_.isEmpty(this.state.topic)
+    return !_.isEmpty(this.state.topics)
   }
 
   componentDidMount () {
@@ -187,7 +189,7 @@ export default class AbsoluteTrend extends React.Component {
 
   @autobind
   onChange (checkedList) {
-    const plainOptions = this.state.topic
+    const plainOptions = this.state.topics
     this.setState({
       ...this.state,
       checkedList,
@@ -200,7 +202,7 @@ export default class AbsoluteTrend extends React.Component {
   onCheckAllChange (e) {
     this.setState({
       ...this.state,
-      checkedList: e.target.checked ? this.state.topic : [],
+      checkedList: e.target.checked ? this.state.topics : [],
       indeterminate: false,
       checkAll: e.target.checked
     })
@@ -225,7 +227,7 @@ export default class AbsoluteTrend extends React.Component {
         </Checkbox>
       </div>
       <br />
-      <CheckboxGroup options={this.state.topic} value={this.state.checkedList} onChange={this.onChange} />
+      <CheckboxGroup options={this.state.topics} value={this.state.checkedList} onChange={this.onChange} />
     </div>
   }
 
