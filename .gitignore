@@ -159,4 +159,4 @@ typings/
 # dotenv environment variables file
 .env
 
-visualization/public
+visualization/public/
