@@ -127,16 +127,30 @@ const getOption = (trend) => {
 }
 
 const transformData = (rawData) => {
-  const trend = {}
+  const totalTrend = {}
+  const topicTrend = {}
+
   rawData.forEach(data => {
-    trend[data.date] = _.get(trend, data.date, 0) + 1
+    totalTrend[data.date] = _.get(totalTrend, data.date, 0) + 1
+    const lda = data.lda
+    const topic = lda.indexOf(Math.max(...lda))
+    if (_.isEmpty(topicTrend[topic])) {
+      topicTrend[topic] = {}
+      topicTrend[topic][data.date] = 1
+    } else {
+      topicTrend[topic][data.date] = _.get(topicTrend[topic], data.date, 0) + 1
+    }
   })
+
+  console.log(topicTrend)
+
   const categoryData = []
   const values = []
-  _.forIn(trend, (value, key) => {
+  _.forIn(totalTrend, (value, key) => {
     categoryData.push(key)
     values.push(value)
   })
+  console.log({categoryData, values})
   return {categoryData, values}
 }
 
