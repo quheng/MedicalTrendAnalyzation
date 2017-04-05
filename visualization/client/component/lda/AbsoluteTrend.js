@@ -2,6 +2,7 @@ import React from 'react'
 import echarts from 'echarts'
 import _ from 'lodash'
 import fetch from 'isomorphic-fetch'
+import moment from 'moment'
 
 import styles from './Main.css'
 import Loading from '../Loading'
@@ -11,6 +12,9 @@ import { Checkbox } from 'antd'
 import { checkStatus, serverAddress } from '../../util'
 
 const refName = 'AbsoluteTrend'
+
+const rawDateFormat = 'YYYY-MM-DD'
+const dateFormat = 'YYYY-MM'
 
 const CheckboxGroup = Checkbox.Group
 const plainOptions = ['Apple', 'Pear', 'Orange']
@@ -131,14 +135,15 @@ const transformData = (rawData) => {
   const topicTrend = []
 
   rawData.forEach(data => {
-    totalTrend[data.date] = _.get(totalTrend, data.date, 0) + 1
+    const date = moment(data.date, rawDateFormat).format(dateFormat)
+    totalTrend[date] = _.get(totalTrend, date, 0) + 1
     const lda = data.lda
     const topic = lda.indexOf(Math.max(...lda))
     if (_.isEmpty(topicTrend[topic])) {
       topicTrend[topic] = {}
-      topicTrend[topic][data.date] = 1
+      topicTrend[topic][date] = 1
     } else {
-      topicTrend[topic][data.date] = _.get(topicTrend[topic], data.date, 0) + 1
+      topicTrend[topic][date] = _.get(topicTrend[topic], date, 0) + 1
     }
   })
 
