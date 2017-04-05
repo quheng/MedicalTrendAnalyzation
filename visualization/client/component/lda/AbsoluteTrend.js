@@ -174,7 +174,7 @@ export default class AbsoluteTrend extends React.Component {
   componentDidUpdate () {
     if (this.isDataLoaded()) {
       const option = getOption(this.state)
-      this.myChart.setOption(option)
+      this.myChart.setOption(option, true)
     }
   }
 
