@@ -17,8 +17,9 @@ const rawDateFormat = 'YYYY-MM-DD'
 const dateFormat = 'YYYY-MM'
 
 const CheckboxGroup = Checkbox.Group
+const legend = {'月线': 1, 'MA3': 3, 'MA5': 5}
 
-const getMaCalculator = (values) => (dayCount) => {
+const getMaCalculator = (values, dayCount) => {
   const result = []
   for (let i = 0, len = values.length; i < len; i++) {
     if (i < dayCount) {
@@ -34,9 +35,21 @@ const getMaCalculator = (values) => (dayCount) => {
   return result
 }
 
-const getOption = (trend) => {
-  const calculateMA = getMaCalculator(trend.values)
-  const legend = ['月线', 'MA3', 'MA5']
+const getSeries = (topicValues, checkedList) => (
+  _.flatMap(checkedList, topic => (
+    _.map(legend, (value, key) => ({
+      name: key,
+      type: 'line',
+      data: getMaCalculator(topicValues[topic], value),
+      smooth: true,
+      lineStyle: {
+        normal: {opacity: 0.5}
+      }
+    }))
+  ))
+)
+
+const getOption = ({ categoryData, topicValues, checkedList }) => {
   return {
     title: {
       text: '绝对趋势',
@@ -49,7 +62,7 @@ const getOption = (trend) => {
       }
     },
     legend: {
-      data: legend
+      data: _.keys(legend)
     },
     grid: {
       left: '10%',
@@ -58,7 +71,7 @@ const getOption = (trend) => {
     },
     xAxis: {
       type: 'category',
-      data: trend.categoryData,
+      data: categoryData,
       scale: true,
       boundaryGap: false,
       axisLine: {onZero: false},
@@ -87,35 +100,7 @@ const getOption = (trend) => {
         end: 100
       }
     ],
-    series: [
-      {
-        name: '月线',
-        type: 'line',
-        data: calculateMA(1),
-        smooth: true,
-        lineStyle: {
-          normal: {opacity: 0.5}
-        }
-      },
-      {
-        name: 'MA3',
-        type: 'line',
-        data: calculateMA(3),
-        smooth: true,
-        lineStyle: {
-          normal: {opacity: 0.5}
-        }
-      },
-      {
-        name: 'MA5',
-        type: 'line',
-        data: calculateMA(5),
-        smooth: true,
-        lineStyle: {
-          normal: {opacity: 0.5}
-        }
-      }
-    ]
+    series: getSeries(topicValues, checkedList)
   }
 }
 
@@ -174,8 +159,8 @@ export default class AbsoluteTrend extends React.Component {
           categoryData: data.categoryData,
           topicValues: data.topicValues,
           topicsName: data.topicsName
-        })
-      }) // todo draw
+        }, this.drawAbsoluteTrend)
+      })
   }
 
   isDataLoaded () {
@@ -194,7 +179,7 @@ export default class AbsoluteTrend extends React.Component {
       checkedList,
       indeterminate: !!checkedList.length && (checkedList.length < plainOptions.length),
       checkAll: checkedList.length === plainOptions.length
-    })
+    }, this.drawAbsoluteTrend)
   }
 
   @autobind
@@ -204,12 +189,12 @@ export default class AbsoluteTrend extends React.Component {
       checkedList: e.target.checked ? this.state.topicsName : [],
       indeterminate: false,
       checkAll: e.target.checked
-    })
+    }, this.drawAbsoluteTrend)
   }
 
   @autobind
   drawAbsoluteTrend () {
-    const option = getOption(this.state.trend)
+    const option = getOption(this.state)
     this.myChart.setOption(option)
   }
 
