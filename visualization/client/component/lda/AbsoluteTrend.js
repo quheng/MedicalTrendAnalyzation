@@ -9,8 +9,10 @@ import Loading from '../Loading'
 import { autobind } from 'react-decoration'
 import { Checkbox } from 'antd'
 import { checkStatus, serverAddress } from '../../util'
-const CheckboxGroup = Checkbox.Group
 
+const refName = 'AbsoluteTrend'
+
+const CheckboxGroup = Checkbox.Group
 const plainOptions = ['Apple', 'Pear', 'Orange']
 const defaultCheckedList = ['Apple', 'Orange']
 
@@ -154,7 +156,7 @@ export default class AbsoluteTrend extends React.Component {
   }
 
   componentDidMount () {
-    this.myChart = echarts.init(this.refs.AbsoluteTrend)
+    this.myChart = echarts.init(this.refs[refName])
   }
 
   @autobind
@@ -196,7 +198,7 @@ export default class AbsoluteTrend extends React.Component {
   render () {
     return <div
       className={styles.container}
-      ref='AbsoluteTrend'>
+      ref={refName}>
       <div>
         {_.isEmpty(this.state.trend)
         ? <Loading />
