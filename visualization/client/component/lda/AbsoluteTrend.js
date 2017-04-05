@@ -155,6 +155,10 @@ export default class AbsoluteTrend extends React.Component {
       .then((doc) => this.setState({...this.state, trend: transformData(doc)}, this.drawAbsoluteTrend))
   }
 
+  isDataLoaded () {
+    return !_.isEmpty(this.state.trend)
+  }
+
   componentDidMount () {
     this.myChart = echarts.init(this.refs[refName])
   }
@@ -185,14 +189,14 @@ export default class AbsoluteTrend extends React.Component {
 
   @autobind
   drawCheckbox () {
-    return <div>
+    return <div style={{position: 'fixed', width: 222, top: 30, right: 120}}>
       <div style={{ borderBottom: '1px solid #E9E9E9' }}>
         <Checkbox
           indeterminate={this.state.indeterminate}
           onChange={this.onCheckAllChange}
           checked={this.state.checkAll}
         >
-          Check all
+          全选
         </Checkbox>
       </div>
       <br />
@@ -202,11 +206,14 @@ export default class AbsoluteTrend extends React.Component {
 
   render () {
     return <div
-      className={styles.container}
-      ref={refName}>
-      {_.isEmpty(this.state.topic)
-        ? <Loading />
-        : this.drawCheckbox()}
+      className={styles.container}>
+      <div
+        className={styles.palette}
+        ref={refName}
+      />
+      {this.isDataLoaded()
+        ? this.drawCheckbox()
+        : <Loading />}
     </div>
   }
 }
