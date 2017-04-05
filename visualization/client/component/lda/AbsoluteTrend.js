@@ -128,7 +128,7 @@ const getOption = (trend) => {
 
 const transformData = (rawData) => {
   const totalTrend = {}
-  const topicTrend = {}
+  const topicTrend = []
 
   rawData.forEach(data => {
     totalTrend[data.date] = _.get(totalTrend, data.date, 0) + 1
@@ -142,16 +142,19 @@ const transformData = (rawData) => {
     }
   })
 
-  console.log(topicTrend)
-
   const categoryData = []
   const values = []
-  _.forIn(totalTrend, (value, key) => {
-    categoryData.push(key)
-    values.push(value)
+  const topicValues = []
+
+  console.log(topicTrend.length)
+  _.forIn(totalTrend, (totalAmount, date) => {
+    categoryData.push(date)
+    values.push(totalAmount)
+    topicValues.push(topicTrend.map(topic => (
+      _.get(topic, date, 0) / totalAmount
+    )))
   })
-  console.log({categoryData, values})
-  return {categoryData, values}
+  return {categoryData, values, topicValues}
 }
 
 export default class AbsoluteTrend extends React.Component {
