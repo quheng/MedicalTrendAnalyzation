@@ -141,6 +141,7 @@ export default class AbsoluteTrend extends React.Component {
       categoryData: [],
       topicValues: [],
       checkedTopics: [],
+      checkedLineTypes: [],
       topicsName: [],
       lineTypeIndeterminate: true,
       lineTypeCheckAll: false,
@@ -199,9 +200,30 @@ export default class AbsoluteTrend extends React.Component {
   onTopicCheckAllChange (e) {
     this.setState({
       ...this.state,
-      checkedTopics: e.target.checked ? this.state.topicsName : [],
-      topicIndeterminate: false,
-      topicCheckAll: e.target.checked
+      checkedLineType: e.target.checked ? this.state.topicsName : [],
+      lineTypeIndeterminate: false,
+      lineTypeCheckAll: e.target.checked
+    })
+  }
+
+  @autobind
+  onLineTypeChange (checkedLineTypes) {
+    const plainOptions = _.keys(lineType)
+    this.setState({
+      ...this.state,
+      checkedLineTypes,
+      lineTypeIndeterminate: !!lineType && (checkedLineTypes.length < plainOptions.length),
+      lineTypeCheckAll: checkedLineTypes.length === plainOptions.length
+    })
+  }
+
+  @autobind
+  onLineTypeCheckAllChange (e) {
+    this.setState({
+      ...this.state,
+      checkedLineTypes: e.target.checked ? _.keys(lineType) : [],
+      lineTypeIndeterminate: false,
+      lineTypeCheckAll: e.target.checked
     })
   }
 
@@ -226,14 +248,14 @@ export default class AbsoluteTrend extends React.Component {
         <div style={{ borderBottom: '1px solid #E9E9E9' }}>
           <Checkbox
             topicIndeterminate={this.state.topicIndeterminate}
-            onChange={this.onTopicCheckAllChange}
-            checked={this.state.topicCheckAll}
+            onChange={this.onLineTypeCheckAllChange}
+            checked={this.state.lineTypeCheckAll}
           >
             全选类型
           </Checkbox>
         </div>
         <br />
-        <CheckboxGroup options={_.keys(lineType)} value={this.state.checkedLineType} onChange={this.onChange} />
+        <CheckboxGroup options={_.keys(lineType)} value={this.state.checkedLineTypes} onChange={this.onLineTypeChange} />
       </div>
     </div>
   }
