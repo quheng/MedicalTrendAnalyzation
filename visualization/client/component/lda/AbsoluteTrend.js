@@ -149,7 +149,6 @@ const transformData = (rawData) => {
       topicValues[topicName(index)].push(_.get(topic, date, 0) / totalAmount)
     })
   })
-  console.log(topicValues)
   return {categoryData, topicValues, topicsName}
 }
 
@@ -160,7 +159,7 @@ export default class AbsoluteTrend extends React.Component {
       categoryData: [],
       topicValues: [],
       checkedList: [],
-      topics: [],
+      topicsName: [],
       indeterminate: true,
       checkAll: false
     }
@@ -171,16 +170,16 @@ export default class AbsoluteTrend extends React.Component {
         const data = transformData(doc)
         this.setState({
           ...this.state,
+          checkedList: [data.topicsName[0]],
           categoryData: data.categoryData,
           topicValues: data.topicValues,
-          checkedList: [data.topic[0]],
-          topics: data.topics
+          topicsName: data.topicsName
         })
       }) // todo draw
   }
 
   isDataLoaded () {
-    return !_.isEmpty(this.state.topics)
+    return !_.isEmpty(this.state.topicsName)
   }
 
   componentDidMount () {
@@ -189,7 +188,7 @@ export default class AbsoluteTrend extends React.Component {
 
   @autobind
   onChange (checkedList) {
-    const plainOptions = this.state.topics
+    const plainOptions = this.state.topicsName
     this.setState({
       ...this.state,
       checkedList,
@@ -202,7 +201,7 @@ export default class AbsoluteTrend extends React.Component {
   onCheckAllChange (e) {
     this.setState({
       ...this.state,
-      checkedList: e.target.checked ? this.state.topics : [],
+      checkedList: e.target.checked ? this.state.topicsName : [],
       indeterminate: false,
       checkAll: e.target.checked
     })
@@ -227,7 +226,7 @@ export default class AbsoluteTrend extends React.Component {
         </Checkbox>
       </div>
       <br />
-      <CheckboxGroup options={this.state.topics} value={this.state.checkedList} onChange={this.onChange} />
+      <CheckboxGroup options={this.state.topicsName} value={this.state.checkedList} onChange={this.onChange} />
     </div>
   }
 
