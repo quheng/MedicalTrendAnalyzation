@@ -17,8 +17,6 @@ const rawDateFormat = 'YYYY-MM-DD'
 const dateFormat = 'YYYY-MM'
 
 const CheckboxGroup = Checkbox.Group
-const plainOptions = ['Apple', 'Pear', 'Orange']
-const defaultCheckedList = ['Apple', 'Orange']
 
 const getMaCalculator = (values) => (dayCount) => {
   const result = []
@@ -50,7 +48,7 @@ const getOption = (trend) => {
       }
     },
     legend: {
-      data: ['MA5', 'MA10', 'MA20', 'MA30']
+      data: ['月线', 'MA3', 'MA5']
     },
     grid: {
       left: '10%',
@@ -90,6 +88,24 @@ const getOption = (trend) => {
     ],
     series: [
       {
+        name: '月线',
+        type: 'line',
+        data: calculateMA(1),
+        smooth: true,
+        lineStyle: {
+          normal: {opacity: 0.5}
+        }
+      },
+      {
+        name: 'MA3',
+        type: 'line',
+        data: calculateMA(3),
+        smooth: true,
+        lineStyle: {
+          normal: {opacity: 0.5}
+        }
+      },
+      {
         name: 'MA5',
         type: 'line',
         data: calculateMA(5),
@@ -97,35 +113,7 @@ const getOption = (trend) => {
         lineStyle: {
           normal: {opacity: 0.5}
         }
-      },
-      {
-        name: 'MA10',
-        type: 'line',
-        data: calculateMA(10),
-        smooth: true,
-        lineStyle: {
-          normal: {opacity: 0.5}
-        }
-      },
-      {
-        name: 'MA20',
-        type: 'line',
-        data: calculateMA(20),
-        smooth: true,
-        lineStyle: {
-          normal: {opacity: 0.5}
-        }
-      },
-      {
-        name: 'MA30',
-        type: 'line',
-        data: calculateMA(30),
-        smooth: true,
-        lineStyle: {
-          normal: {opacity: 0.5}
-        }
       }
-
     ]
   }
 }
@@ -151,7 +139,6 @@ const transformData = (rawData) => {
   const values = []
   const topicValues = []
 
-  console.log(topicTrend.length)
   _.forIn(totalTrend, (totalAmount, date) => {
     categoryData.push(date)
     values.push(totalAmount)
@@ -159,26 +146,39 @@ const transformData = (rawData) => {
       _.get(topic, date, 0) / totalAmount
     )))
   })
-  return {categoryData, values, topicValues}
+
+  const topic = topicTrend.map((topic, index) => (`主题${index + 1}`))
+  return {categoryData, topicValues, topic}
 }
 
 export default class AbsoluteTrend extends React.Component {
   constructor () {
     super()
     this.state = {
-      trend: [],
-      checkedList: defaultCheckedList,
+      categoryData: [],
+      topicValues: [],
+      checkedList: [],
+      topic: [],
       indeterminate: true,
       checkAll: false
     }
     fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
-      .then((doc) => this.setState({...this.state, trend: transformData(doc)}, this.drawAbsoluteTrend))
+      .then((doc) => {
+        const data = transformData(doc)
+        this.setState({
+          ...this.state,
+          categoryData: data.categoryData,
+          topicValues: data.topicValues,
+          checkedList: [data.topic[0]],
+          topic: data.topic
+        })
+      }) // todo draw
   }
 
   isDataLoaded () {
-    return !_.isEmpty(this.state.trend)
+    return !_.isEmpty(this.state.topic)
   }
 
   componentDidMount () {
@@ -187,7 +187,9 @@ export default class AbsoluteTrend extends React.Component {
 
   @autobind
   onChange (checkedList) {
+    const plainOptions = this.state.topic
     this.setState({
+      ...this.state,
       checkedList,
       indeterminate: !!checkedList.length && (checkedList.length < plainOptions.length),
       checkAll: checkedList.length === plainOptions.length
@@ -197,7 +199,8 @@ export default class AbsoluteTrend extends React.Component {
   @autobind
   onCheckAllChange (e) {
     this.setState({
-      checkedList: e.target.checked ? plainOptions : [],
+      ...this.state,
+      checkedList: e.target.checked ? this.state.topic : [],
       indeterminate: false,
       checkAll: e.target.checked
     })
@@ -222,7 +225,7 @@ export default class AbsoluteTrend extends React.Component {
         </Checkbox>
       </div>
       <br />
-      <CheckboxGroup options={plainOptions} value={this.state.checkedList} onChange={this.onChange} />
+      <CheckboxGroup options={this.state.topic} value={this.state.checkedList} onChange={this.onChange} />
     </div>
   }
 
