@@ -159,7 +159,7 @@ export default class AbsoluteTrend extends React.Component {
           categoryData: data.categoryData,
           topicValues: data.topicValues,
           topicsName: data.topicsName
-        }, this.drawAbsoluteTrend)
+        })
       })
   }
 
@@ -171,6 +171,13 @@ export default class AbsoluteTrend extends React.Component {
     this.myChart = echarts.init(this.refs[refName])
   }
 
+  componentDidUpdate () {
+    if (this.isDataLoaded()) {
+      const option = getOption(this.state)
+      this.myChart.setOption(option)
+    }
+  }
+
   @autobind
   onChange (checkedList) {
     const plainOptions = this.state.topicsName
@@ -179,7 +186,7 @@ export default class AbsoluteTrend extends React.Component {
       checkedList,
       indeterminate: !!checkedList.length && (checkedList.length < plainOptions.length),
       checkAll: checkedList.length === plainOptions.length
-    }, this.drawAbsoluteTrend)
+    })
   }
 
   @autobind
@@ -189,13 +196,7 @@ export default class AbsoluteTrend extends React.Component {
       checkedList: e.target.checked ? this.state.topicsName : [],
       indeterminate: false,
       checkAll: e.target.checked
-    }, this.drawAbsoluteTrend)
-  }
-
-  @autobind
-  drawAbsoluteTrend () {
-    const option = getOption(this.state)
-    this.myChart.setOption(option)
+    })
   }
 
   @autobind
