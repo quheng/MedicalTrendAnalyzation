@@ -4,10 +4,11 @@ import _ from 'lodash'
 import fetch from 'isomorphic-fetch'
 
 import styles from './Main.css'
-import Loading from '../Loading'
 
 import { autobind } from 'react-decoration'
 import { checkStatus, serverAddress } from '../../util'
+
+const refName = 'AbsoluteTrend'
 
 const getOption = ({ topic }) => (
   {
@@ -75,24 +76,25 @@ export default class Topic extends React.Component {
   }
 
   componentDidMount () {
-    this.myChart = echarts.init(this.refs.Topic)
+    this.myChart = echarts.init(this.refs[refName])
+  }
+
+  componentDidUpdate () {
+    if (this.isDataLoaded()) {
+      const option = getOption(this.state)
+      this.myChart.setOption(option)
+    }
   }
 
   @autobind
-  drawTopic () {
-    const option = getOption(this.state)
-    this.myChart.setOption(option)
+  isDataLoaded () {
+    return !_.isEmpty(this.state.topic)
   }
 
   render () {
     return <div
       className={styles.container}
-      ref='Topic'>
-      <div>
-        {_.isEmpty(this.state.trend) && _.isEmpty(this.state.topic)
-        ? <Loading />
-        : this.drawTopic()}
-      </div>
-    </div>
+      ref={refName}
+    />
   }
 }

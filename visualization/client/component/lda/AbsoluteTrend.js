@@ -5,7 +5,6 @@ import fetch from 'isomorphic-fetch'
 import moment from 'moment'
 
 import styles from './Main.css'
-import Loading from '../Loading'
 
 import { autobind } from 'react-decoration'
 import { checkStatus, serverAddress } from '../../util'
@@ -105,7 +104,7 @@ export default class AbsoluteTrend extends React.Component {
   }
 
   componentDidMount () {
-    this.myChart = echarts.init(this.refs.AbsoluteTrend)
+    this.myChart = echarts.init(this.refs[refName])
   }
 
   componentDidUpdate () {
@@ -122,12 +121,8 @@ export default class AbsoluteTrend extends React.Component {
 
   render () {
     return <div
-      className={styles.container}>
-      <div
-        className={styles.palette}
-        ref={refName}
-      />
-      {!this.isDataLoaded() || <Loading />}
-    </div>
+      className={styles.container}
+      ref={refName}
+    />
   }
 }

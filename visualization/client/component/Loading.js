@@ -7,6 +7,7 @@ class Loading extends Component {
       width: '100%',
       height: '100%',
       display: 'flex',
+      flexShrink: 0,
       justifyContent: 'center',
       alignItems: 'center'
     }}>
