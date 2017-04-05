@@ -3,7 +3,7 @@ import fetch from 'isomorphic-fetch'
 import WordCloud from 'react-d3-cloud'
 import _ from 'lodash'
 import Loading from '../Loading'
-import styles from './Main.css'
+import Dimensions from 'react-dimensions'
 
 import { autobind } from 'react-decoration'
 import { checkStatus, serverAddress } from '../../util'
@@ -17,7 +17,7 @@ class WordsCloud extends Component {
       words: [],
       limit
     }
-    fetch(`${serverAddress}/words-relationship`, { method: 'GET' })
+    fetch(`${serverAddress}/words-relationship/${limit}`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
       .then((data) => this.setState({words: data}))
@@ -25,13 +25,14 @@ class WordsCloud extends Component {
 
   @autobind
   drawWordCloud () {
-    return <div className={styles.container}>
-      <WordCloud
-        data={_.slice(this.state.words, 0, this.state.limit).map((word) => ({text: word[0], value: word[1]}))}
-        fontSizeMapper={word => Math.log2(word.value) * 5}
-        rotate={word => word.value % 360}
+    console.log(this.props)
+    return <WordCloud
+      width={this.props.containerWidth}
+      height={this.props.containerHeight}
+      data={this.state.words.map((word) => ({text: word[0], value: word[1]}))}
+      fontSizeMapper={word => word.value / 100}
+      rotate={word => word.value % 360}
      />
-    </div>
   }
 
   render () {
@@ -41,4 +42,4 @@ class WordsCloud extends Component {
   }
 }
 
-export default WordsCloud
+export default Dimensions()(WordsCloud)

@@ -13,14 +13,8 @@ const ldaTopic = JSON.parse(fs.readFileSync(ldaTopicPath))
 
 const apiRouter = express.Router()
 
-apiRouter.get('/words-relationship', (req, res) => {
-  const limit = req.query['limit']
-  res.json(_.slice(wordsRelationship, 0, limit))
-})
-
-apiRouter.get('/lda', (req, res) => {
-  const limit = req.query['limit']
-  res.json(_.slice(wordsRelationship, 0, limit))
+apiRouter.get('/words-relationship/:limit', (req, res) => {
+  res.json(_.slice(wordsRelationship, 0, req.params.limit))
 })
 
 apiRouter.get('/lda-topic', (req, res) => {
