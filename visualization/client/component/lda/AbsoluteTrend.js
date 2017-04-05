@@ -7,7 +7,12 @@ import styles from './Main.css'
 import Loading from '../Loading'
 
 import { autobind } from 'react-decoration'
+import { Checkbox } from 'antd'
 import { checkStatus, serverAddress } from '../../util'
+const CheckboxGroup = Checkbox.Group
+
+const plainOptions = ['Apple', 'Pear', 'Orange']
+const defaultCheckedList = ['Apple', 'Orange']
 
 const getMaCalculator = (values) => (dayCount) => {
   const result = []
@@ -137,12 +142,15 @@ export default class AbsoluteTrend extends React.Component {
   constructor () {
     super()
     this.state = {
-      trend: []
+      trend: [],
+      checkedList: defaultCheckedList,
+      indeterminate: true,
+      checkAll: false
     }
     fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
-      .then((doc) => this.setState({trend: transformData(doc)}))
+      .then((doc) => this.setState({...this.state, trend: transformData(doc)}))
   }
 
   componentDidMount () {
@@ -150,9 +158,39 @@ export default class AbsoluteTrend extends React.Component {
   }
 
   @autobind
+  onChange (checkedList) {
+    this.setState({
+      checkedList,
+      indeterminate: !!checkedList.length && (checkedList.length < plainOptions.length),
+      checkAll: checkedList.length === plainOptions.length
+    })
+  }
+
+  @autobind
+  onCheckAllChange (e) {
+    this.setState({
+      checkedList: e.target.checked ? plainOptions : [],
+      indeterminate: false,
+      checkAll: e.target.checked
+    })
+  }
+
+  @autobind
   drawAbsoluteTrend () {
     const option = getOption(this.state.trend)
     this.myChart.setOption(option)
+    return <div style={{position: 'fixed', top: 30, right: 100}}>
+      <div style={{ borderBottom: '1px solid #E9E9E9' }}>
+        <Checkbox
+          indeterminate={this.state.indeterminate}
+          onChange={this.onCheckAllChange}
+          checked={this.state.checkAll}>
+          全选
+        </Checkbox>
+      </div>
+      <br />
+      <CheckboxGroup options={plainOptions} value={this.state.checkedList} onChange={this.onChange} />
+    </div>
   }
 
   render () {
