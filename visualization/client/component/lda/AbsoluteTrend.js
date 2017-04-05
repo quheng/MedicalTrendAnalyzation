@@ -17,7 +17,7 @@ const rawDateFormat = 'YYYY-MM-DD'
 const dateFormat = 'YYYY-MM'
 
 const CheckboxGroup = Checkbox.Group
-const lineType = {'月线': 1, 'MA3': 3, 'MA5': 5}
+const lineTypeList = {'月线': 1, 'MA3': 3, 'MA5': 5}
 
 const getMaCalculator = (values, dayCount) => {
   const result = []
@@ -35,12 +35,12 @@ const getMaCalculator = (values, dayCount) => {
   return result
 }
 
-const getSeries = (topicValues, checkedTopics) => (
+const getSeries = ({ categoryData, topicValues, checkedTopics, checkedLineTypes }) => (
   _.flatMap(checkedTopics, topic => (
-    _.map(lineType, (value, key) => ({
-      name: `${topic}-${key}`,
+    checkedLineTypes.map(lineType => ({
+      name: `${topic}-${lineType}`,
       type: 'line',
-      data: getMaCalculator(topicValues[topic], value),
+      data: getMaCalculator(topicValues[topic], lineTypeList[lineType]),
       smooth: true,
       lineStyle: {
         normal: {opacity: 0.5}
@@ -49,7 +49,7 @@ const getSeries = (topicValues, checkedTopics) => (
   ))
 )
 
-const getOption = ({ categoryData, topicValues, checkedTopics }) => {
+const getOption = (categoryData) => {
   return {
     title: {
       text: '绝对趋势',
@@ -96,8 +96,7 @@ const getOption = ({ categoryData, topicValues, checkedTopics }) => {
         start: 50,
         end: 100
       }
-    ],
-    series: getSeries(topicValues, checkedTopics)
+    ]
   }
 }
 
@@ -141,10 +140,10 @@ export default class AbsoluteTrend extends React.Component {
       categoryData: [],
       topicValues: [],
       checkedTopics: [],
-      checkedLineTypes: [],
+      checkedLineTypes: [_.keys(lineTypeList)[0]],
       topicsName: [],
-      lineTypeIndeterminate: true,
-      lineTypeCheckAll: false,
+      lineTypeListIndeterminate: true,
+      lineTypeListCheckAll: false,
       topicIndeterminate: true,
       topicCheckAll: false
     }
@@ -173,13 +172,8 @@ export default class AbsoluteTrend extends React.Component {
 
   componentDidUpdate () {
     if (this.isDataLoaded()) {
-      let option = this.myChart.getOption()
-      if (_.isEmpty(option)) {
-        option = getOption(this.state)
-      } else {
-        option.series = getSeries(this.state.topicValues, this.state.checkedTopics)
-      }
-
+      let option = this.myChart.getOption() || getOption(this.state.categoryData)
+      option.series = getSeries(this.state)
       // 这里不能直接 this.myChart.setOption(series), 那样会无法去掉数据
       this.myChart.setOption(option, true)
     }
@@ -201,19 +195,19 @@ export default class AbsoluteTrend extends React.Component {
     this.setState({
       ...this.state,
       checkedLineType: e.target.checked ? this.state.topicsName : [],
-      lineTypeIndeterminate: false,
-      lineTypeCheckAll: e.target.checked
+      lineTypeListIndeterminate: false,
+      lineTypeListCheckAll: e.target.checked
     })
   }
 
   @autobind
   onLineTypeChange (checkedLineTypes) {
-    const plainOptions = _.keys(lineType)
+    const plainOptions = _.keys(lineTypeList)
     this.setState({
       ...this.state,
       checkedLineTypes,
-      lineTypeIndeterminate: !!lineType && (checkedLineTypes.length < plainOptions.length),
-      lineTypeCheckAll: checkedLineTypes.length === plainOptions.length
+      lineTypeListIndeterminate: !!lineTypeList && (checkedLineTypes.length < plainOptions.length),
+      lineTypeListCheckAll: checkedLineTypes.length === plainOptions.length
     })
   }
 
@@ -221,9 +215,9 @@ export default class AbsoluteTrend extends React.Component {
   onLineTypeCheckAllChange (e) {
     this.setState({
       ...this.state,
-      checkedLineTypes: e.target.checked ? _.keys(lineType) : [],
-      lineTypeIndeterminate: false,
-      lineTypeCheckAll: e.target.checked
+      checkedLineTypes: e.target.checked ? _.keys(lineTypeList) : [],
+      lineTypeListIndeterminate: false,
+      lineTypeListCheckAll: e.target.checked
     })
   }
 
@@ -249,13 +243,13 @@ export default class AbsoluteTrend extends React.Component {
           <Checkbox
             topicIndeterminate={this.state.topicIndeterminate}
             onChange={this.onLineTypeCheckAllChange}
-            checked={this.state.lineTypeCheckAll}
+            checked={this.state.lineTypeListCheckAll}
           >
             全选类型
           </Checkbox>
         </div>
         <br />
-        <CheckboxGroup options={_.keys(lineType)} value={this.state.checkedLineTypes} onChange={this.onLineTypeChange} />
+        <CheckboxGroup options={_.keys(lineTypeList)} value={this.state.checkedLineTypes} onChange={this.onLineTypeChange} />
       </div>
     </div>
   }
