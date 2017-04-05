@@ -32,3 +32,10 @@
   justify-content: flex-start;
   align-items: center;
 }
+
+:local .relativeTrendCheckedBox {
+  position: fixed;
+  top: 30px;
+  right: 120px;
+  display: flex;
+}

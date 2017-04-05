@@ -109,7 +109,6 @@ export default class AbsoluteTrend extends React.Component {
   @autobind
   drawRelativeTrend () {
     const option = getOption(this.state)
-    console.log(option)
     this.myChart.setOption(option)
   }
 

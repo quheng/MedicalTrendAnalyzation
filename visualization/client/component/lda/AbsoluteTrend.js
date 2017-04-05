@@ -223,9 +223,9 @@ export default class AbsoluteTrend extends React.Component {
 
   @autobind
   drawCheckbox () {
-    return <div style={{position: 'fixed', top: 30, right: 120}}>
-      <div style={{width: 222}}>
-        <div style={{borderBottom: '1px solid #E9E9E9'}}>
+    return <div className={styles.relativeTrendCheckedBox}>
+      <div style={{width: 222, maLeft: 10}}>
+        <div>
           <Checkbox
             topicIndeterminate={this.state.topicIndeterminate}
             onChange={this.onTopicCheckAllChange}
@@ -239,7 +239,7 @@ export default class AbsoluteTrend extends React.Component {
       </div>
 
       <div style={{width: 222}}>
-        <div style={{ borderBottom: '1px solid #E9E9E9' }}>
+        <div>
           <Checkbox
             topicIndeterminate={this.state.topicIndeterminate}
             onChange={this.onLineTypeCheckAllChange}
