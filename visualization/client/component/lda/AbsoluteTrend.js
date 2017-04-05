@@ -194,9 +194,9 @@ export default class AbsoluteTrend extends React.Component {
   onTopicCheckAllChange (e) {
     this.setState({
       ...this.state,
-      checkedLineType: e.target.checked ? this.state.topicsName : [],
-      lineTypeListIndeterminate: false,
-      lineTypeListCheckAll: e.target.checked
+      checkedTopics: e.target.checked ? this.state.topicsName : [],
+      topicIndeterminate: false,
+      topicCheckAll: e.target.checked
     })
   }
 
