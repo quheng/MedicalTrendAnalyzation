@@ -148,6 +148,11 @@ export default class AbsoluteTrend extends React.Component {
       topicIndeterminate: true,
       topicCheckAll: false
     }
+    fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
+      .then(checkStatus)
+      .then((res) => (res.json()))
+      .then((topicKeyWords) => this.setState({...this.state, topicKeyWords}))
+
     fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
@@ -232,9 +237,12 @@ export default class AbsoluteTrend extends React.Component {
 
   @autobind
   getTopicKeyWords (index) {
-    return <div>
-      <p>{index}</p>
-      <p>Content</p>
+    return <div style={{display: 'flex', flexWrap: 'wrap', width: '100'}}>
+      {
+        _.get(this.state.topicKeyWords, index, []).map(keyWord => (
+          <div style={{margin: '5'}}>{keyWord}</div>
+        ))
+      }
     </div>
   }
 
