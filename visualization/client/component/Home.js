@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import styles from './Home.css'
 import LdaWordsCloud from './lda/WordsCloud'
-import LdaAbsoluteTrend from './lda/RelativeTrend'
-import LdaRelativeTrend from './lda/AbsoluteTrend'
+import LdaAbsoluteTrend from './lda/AbsoluteTrend'
+import LdaRelativeTrend from './lda/RelativeTrend'
 import LdaTopic from './lda/Topic'
 import LdaAnalyze from './lda/Analyze'
 
