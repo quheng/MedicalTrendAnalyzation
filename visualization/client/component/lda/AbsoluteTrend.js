@@ -17,7 +17,7 @@ const rawDateFormat = 'YYYY-MM-DD'
 const dateFormat = 'YYYY-MM'
 
 const CheckboxGroup = Checkbox.Group
-const legend = {'月线': 1, 'MA3': 3, 'MA5': 5}
+const lineType = {'月线': 1, 'MA3': 3, 'MA5': 5}
 
 const getMaCalculator = (values, dayCount) => {
   const result = []
@@ -37,7 +37,7 @@ const getMaCalculator = (values, dayCount) => {
 
 const getSeries = (topicValues, checkedTopics) => (
   _.flatMap(checkedTopics, topic => (
-    _.map(legend, (value, key) => ({
+    _.map(lineType, (value, key) => ({
       name: `${topic}-${key}`,
       type: 'line',
       data: getMaCalculator(topicValues[topic], value),
@@ -142,8 +142,10 @@ export default class AbsoluteTrend extends React.Component {
       topicValues: [],
       checkedTopics: [],
       topicsName: [],
-      indeterminate: true,
-      checkAll: false
+      lineTypeIndeterminate: true,
+      lineTypeCheckAll: false,
+      topicIndeterminate: true,
+      topicCheckAll: false
     }
     fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
       .then(checkStatus)
@@ -170,29 +172,36 @@ export default class AbsoluteTrend extends React.Component {
 
   componentDidUpdate () {
     if (this.isDataLoaded()) {
-      const option = getOption(this.state, true)
-      this.myChart.setOption(option)
+      let option = this.myChart.getOption()
+      if (_.isEmpty(option)) {
+        option = getOption(this.state)
+      } else {
+        option.series = getSeries(this.state.topicValues, this.state.checkedTopics)
+      }
+
+      // 这里不能直接 this.myChart.setOption(series), 那样会无法去掉数据
+      this.myChart.setOption(option, true)
     }
   }
 
   @autobind
-  onChange (checkedTopics) {
+  onTopicChange (checkedTopics) {
     const plainOptions = this.state.topicsName
     this.setState({
       ...this.state,
       checkedTopics,
-      indeterminate: !!checkedTopics.length && (checkedTopics.length < plainOptions.length),
-      checkAll: checkedTopics.length === plainOptions.length
+      topicIndeterminate: !!checkedTopics.length && (checkedTopics.length < plainOptions.length),
+      topicCheckAll: checkedTopics.length === plainOptions.length
     })
   }
 
   @autobind
-  onCheckAllChange (e) {
+  onTopicCheckAllChange (e) {
     this.setState({
       ...this.state,
       checkedTopics: e.target.checked ? this.state.topicsName : [],
-      indeterminate: false,
-      checkAll: e.target.checked
+      topicIndeterminate: false,
+      topicCheckAll: e.target.checked
     })
   }
 
@@ -202,15 +211,29 @@ export default class AbsoluteTrend extends React.Component {
       <div style={{width: 222}}>
         <div style={{borderBottom: '1px solid #E9E9E9'}}>
           <Checkbox
-            indeterminate={this.state.indeterminate}
-            onChange={this.onCheckAllChange}
-            checked={this.state.checkAll}
+            topicIndeterminate={this.state.topicIndeterminate}
+            onChange={this.onTopicCheckAllChange}
+            checked={this.state.topicCheckAll}
           >
             全选主题
           </Checkbox>
         </div>
         <br />
-        <CheckboxGroup options={this.state.topicsName} value={this.state.checkedTopics} onChange={this.onChange} />
+        <CheckboxGroup options={this.state.topicsName} value={this.state.checkedTopics} onChange={this.onTopicChange} />
+      </div>
+
+      <div style={{width: 222}}>
+        <div style={{ borderBottom: '1px solid #E9E9E9' }}>
+          <Checkbox
+            topicIndeterminate={this.state.topicIndeterminate}
+            onChange={this.onTopicCheckAllChange}
+            checked={this.state.topicCheckAll}
+          >
+            全选类型
+          </Checkbox>
+        </div>
+        <br />
+        <CheckboxGroup options={_.keys(lineType)} value={this.state.checkedLineType} onChange={this.onChange} />
       </div>
     </div>
   }
