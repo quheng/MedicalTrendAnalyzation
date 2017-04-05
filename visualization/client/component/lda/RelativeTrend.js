@@ -52,7 +52,7 @@ const getSeries = ({ categoryData, topicValues, checkedTopics, checkedLineTypes 
 const getOption = (categoryData) => {
   return {
     title: {
-      text: '绝对趋势',
+      text: '相对趋势',
       left: 100
     },
     tooltip: {
