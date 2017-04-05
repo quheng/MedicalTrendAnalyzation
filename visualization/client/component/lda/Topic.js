@@ -10,7 +10,7 @@ import { checkStatus, serverAddress } from '../../util'
 
 const refName = 'AbsoluteTrend'
 
-const getOption = ({ topic }) => (
+const getOption = ({ keywords, wordsTopics, nodes, links }) => (
   {
     title: {
       text: '主题分析',
@@ -18,14 +18,25 @@ const getOption = ({ topic }) => (
     },
     tooltip: {
       trigger: 'item',
-      triggerOn: 'mousemove'
+      triggerOn: 'mousemove',
+      formatter: (item) => {
+        const data = item.data
+        if (!_.isEmpty(data.source)) {
+          return `${data.source}-${data.target}`
+        }
+        if (!_.isEmpty(_.get(keywords, data.name))) {
+          return keywords[data.name]
+        } else {
+          return Array.from(wordsTopics[data.name])
+        }
+      }
     },
     series: [
       {
         type: 'sankey',
         layout: 'none',
-        data: topic.nodes,
-        links: topic.links,
+        data: nodes,
+        links: links,
         itemStyle: {
           normal: {
             borderWidth: 1,
@@ -46,9 +57,13 @@ const getOption = ({ topic }) => (
 const transformData = (rawData) => {
   const links = []
   const nodes = _.uniq(_.concat(_.map(rawData, (value, index) => (`主题${index + 1}`)), ...rawData))
-  rawData.forEach((topic, index) => {
+  const keywords = {}
+  const wordsTopics = {}
+  rawData.forEach((topicKeywords, index) => {
     const source = `主题${index + 1}`
-    topic.forEach((word) => {
+    keywords[source] = topicKeywords
+    topicKeywords.forEach((word) => {
+      wordsTopics[word] = _.get(wordsTopics, word, new Set()).add(source)
       links.push({
         source,
         target: word,
@@ -58,6 +73,8 @@ const transformData = (rawData) => {
   })
 
   return {
+    wordsTopics,
+    keywords,
     links,
     nodes: nodes.map((node) => ({name: node}))
   }
@@ -72,7 +89,7 @@ export default class Topic extends React.Component {
     fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
-      .then((topic) => this.setState({topic: transformData(topic)}))
+      .then((topic) => this.setState({...this.state, ...transformData(topic)}))
   }
 
   componentDidMount () {
@@ -88,7 +105,7 @@ export default class Topic extends React.Component {
 
   @autobind
   isDataLoaded () {
-    return !_.isEmpty(this.state.topic)
+    return !_.isEmpty(this.state.nodes)
   }
 
   render () {

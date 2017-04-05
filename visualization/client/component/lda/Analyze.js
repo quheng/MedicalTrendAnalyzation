@@ -47,7 +47,6 @@ export default class Analyze extends React.Component {
 
   componentDidMount () {
     this.myChart = echarts.init(this.refs[refName])
-    console.log(this.myChart)
   }
 
   componentDidUpdate () {

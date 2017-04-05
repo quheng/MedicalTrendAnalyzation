@@ -25,7 +25,6 @@ class WordsCloud extends Component {
 
   @autobind
   drawWordCloud () {
-    console.log(this.props)
     return <WordCloud
       width={this.props.containerWidth}
       height={this.props.containerHeight}
