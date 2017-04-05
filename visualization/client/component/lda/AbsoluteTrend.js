@@ -152,7 +152,7 @@ export default class AbsoluteTrend extends React.Component {
     fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
-      .then((doc) => this.setState({...this.state, trend: transformData(doc)}))
+      .then((doc) => this.setState({...this.state, trend: transformData(doc)}, this.drawAbsoluteTrend))
   }
 
   componentDidMount () {
@@ -181,13 +181,18 @@ export default class AbsoluteTrend extends React.Component {
   drawAbsoluteTrend () {
     const option = getOption(this.state.trend)
     this.myChart.setOption(option)
-    return <div style={{position: 'fixed', top: 30, right: 100}}>
+  }
+
+  @autobind
+  drawCheckbox () {
+    return <div>
       <div style={{ borderBottom: '1px solid #E9E9E9' }}>
         <Checkbox
           indeterminate={this.state.indeterminate}
           onChange={this.onCheckAllChange}
-          checked={this.state.checkAll}>
-          全选
+          checked={this.state.checkAll}
+        >
+          Check all
         </Checkbox>
       </div>
       <br />
@@ -199,11 +204,9 @@ export default class AbsoluteTrend extends React.Component {
     return <div
       className={styles.container}
       ref={refName}>
-      <div>
-        {_.isEmpty(this.state.trend)
+      {_.isEmpty(this.state.topic)
         ? <Loading />
-        : this.drawAbsoluteTrend()}
-      </div>
+        : this.drawCheckbox()}
     </div>
   }
 }
