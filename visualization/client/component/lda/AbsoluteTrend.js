@@ -35,10 +35,10 @@ const getMaCalculator = (values, dayCount) => {
   return result
 }
 
-const getSeries = (topicValues, checkedList) => (
-  _.flatMap(checkedList, topic => (
+const getSeries = (topicValues, checkedTopics) => (
+  _.flatMap(checkedTopics, topic => (
     _.map(legend, (value, key) => ({
-      name: key,
+      name: `${topic}-${key}`,
       type: 'line',
       data: getMaCalculator(topicValues[topic], value),
       smooth: true,
@@ -49,7 +49,7 @@ const getSeries = (topicValues, checkedList) => (
   ))
 )
 
-const getOption = ({ categoryData, topicValues, checkedList }) => {
+const getOption = ({ categoryData, topicValues, checkedTopics }) => {
   return {
     title: {
       text: '绝对趋势',
@@ -60,9 +60,6 @@ const getOption = ({ categoryData, topicValues, checkedList }) => {
       axisPointer: {
         type: 'cross'
       }
-    },
-    legend: {
-      data: _.keys(legend)
     },
     grid: {
       left: '10%',
@@ -100,7 +97,7 @@ const getOption = ({ categoryData, topicValues, checkedList }) => {
         end: 100
       }
     ],
-    series: getSeries(topicValues, checkedList)
+    series: getSeries(topicValues, checkedTopics)
   }
 }
 
@@ -143,7 +140,7 @@ export default class AbsoluteTrend extends React.Component {
     this.state = {
       categoryData: [],
       topicValues: [],
-      checkedList: [],
+      checkedTopics: [],
       topicsName: [],
       indeterminate: true,
       checkAll: false
@@ -155,7 +152,7 @@ export default class AbsoluteTrend extends React.Component {
         const data = transformData(doc)
         this.setState({
           ...this.state,
-          checkedList: [data.topicsName[0]],
+          checkedTopics: [data.topicsName[0]],
           categoryData: data.categoryData,
           topicValues: data.topicValues,
           topicsName: data.topicsName
@@ -173,19 +170,19 @@ export default class AbsoluteTrend extends React.Component {
 
   componentDidUpdate () {
     if (this.isDataLoaded()) {
-      const option = getOption(this.state)
-      this.myChart.setOption(option, true)
+      const option = getOption(this.state, true)
+      this.myChart.setOption(option)
     }
   }
 
   @autobind
-  onChange (checkedList) {
+  onChange (checkedTopics) {
     const plainOptions = this.state.topicsName
     this.setState({
       ...this.state,
-      checkedList,
-      indeterminate: !!checkedList.length && (checkedList.length < plainOptions.length),
-      checkAll: checkedList.length === plainOptions.length
+      checkedTopics,
+      indeterminate: !!checkedTopics.length && (checkedTopics.length < plainOptions.length),
+      checkAll: checkedTopics.length === plainOptions.length
     })
   }
 
@@ -193,7 +190,7 @@ export default class AbsoluteTrend extends React.Component {
   onCheckAllChange (e) {
     this.setState({
       ...this.state,
-      checkedList: e.target.checked ? this.state.topicsName : [],
+      checkedTopics: e.target.checked ? this.state.topicsName : [],
       indeterminate: false,
       checkAll: e.target.checked
     })
@@ -201,18 +198,20 @@ export default class AbsoluteTrend extends React.Component {
 
   @autobind
   drawCheckbox () {
-    return <div style={{position: 'fixed', width: 222, top: 30, right: 120}}>
-      <div style={{ borderBottom: '1px solid #E9E9E9' }}>
-        <Checkbox
-          indeterminate={this.state.indeterminate}
-          onChange={this.onCheckAllChange}
-          checked={this.state.checkAll}
-        >
-          全选
-        </Checkbox>
+    return <div style={{position: 'fixed', top: 30, right: 120}}>
+      <div style={{width: 222}}>
+        <div style={{borderBottom: '1px solid #E9E9E9'}}>
+          <Checkbox
+            indeterminate={this.state.indeterminate}
+            onChange={this.onCheckAllChange}
+            checked={this.state.checkAll}
+          >
+            全选主题
+          </Checkbox>
+        </div>
+        <br />
+        <CheckboxGroup options={this.state.topicsName} value={this.state.checkedTopics} onChange={this.onChange} />
       </div>
-      <br />
-      <CheckboxGroup options={this.state.topicsName} value={this.state.checkedList} onChange={this.onChange} />
     </div>
   }
 
