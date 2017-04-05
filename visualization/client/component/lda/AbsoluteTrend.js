@@ -122,7 +122,6 @@ export default class AbsoluteTrend extends React.Component {
   render () {
     return <div
       className={styles.container}
-      ref={refName}
-    />
+      ref={refName} />
   }
 }
