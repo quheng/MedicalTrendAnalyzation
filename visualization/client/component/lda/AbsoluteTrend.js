@@ -8,7 +8,7 @@ import styles from './Main.css'
 import Loading from '../Loading'
 
 import { autobind } from 'react-decoration'
-import { Checkbox } from 'antd'
+import { Popover, Checkbox } from 'antd'
 import { checkStatus, serverAddress } from '../../util'
 
 const refName = 'AbsoluteTrend'
@@ -36,7 +36,7 @@ const getMaCalculator = (values, dayCount) => {
 }
 
 const getSeries = ({ categoryData, topicValues, checkedTopics, checkedLineTypes }) => (
-  _.flatMap(checkedTopics, topic => (
+  _.flatMap(Array.from(checkedTopics), topic => (
     checkedLineTypes.map(lineType => ({
       name: `${topic}-${lineType}`,
       type: 'line',
@@ -137,9 +137,10 @@ export default class AbsoluteTrend extends React.Component {
   constructor () {
     super()
     this.state = {
+      topicKeyWords: [],
       categoryData: [],
       topicValues: [],
-      checkedTopics: [],
+      checkedTopics: new Set(),
       checkedLineTypes: [_.keys(lineTypeList)[0]],
       topicsName: [],
       lineTypeListIndeterminate: true,
@@ -154,7 +155,7 @@ export default class AbsoluteTrend extends React.Component {
         const data = transformData(doc)
         this.setState({
           ...this.state,
-          checkedTopics: [data.topicsName[0]],
+          checkedTopics: new Set([data.topicsName[0]]),
           categoryData: data.categoryData,
           topicValues: data.topicValues,
           topicsName: data.topicsName
@@ -180,21 +181,29 @@ export default class AbsoluteTrend extends React.Component {
   }
 
   @autobind
-  onTopicChange (checkedTopics) {
-    const plainOptions = this.state.topicsName
-    this.setState({
-      ...this.state,
-      checkedTopics,
-      topicIndeterminate: !!checkedTopics.length && (checkedTopics.length < plainOptions.length),
-      topicCheckAll: checkedTopics.length === plainOptions.length
-    })
+  onTopicChange (value) {
+    return (e) => {
+      const plainOptions = this.state.topicsName
+      const checkedTopics = this.state.checkedTopics
+      if (e.target.checked) {
+        checkedTopics.add(value)
+      } else {
+        checkedTopics.delete(value)
+      }
+      this.setState({
+        ...this.state,
+        checkedTopics,
+        topicIndeterminate: !!checkedTopics.size && (checkedTopics.size < plainOptions.length),
+        topicCheckAll: checkedTopics.size === plainOptions.length
+      })
+    }
   }
 
   @autobind
   onTopicCheckAllChange (e) {
     this.setState({
       ...this.state,
-      checkedTopics: e.target.checked ? this.state.topicsName : [],
+      checkedTopics: e.target.checked ? new Set(this.state.topicsName) : new Set(),
       topicIndeterminate: false,
       topicCheckAll: e.target.checked
     })
@@ -222,6 +231,14 @@ export default class AbsoluteTrend extends React.Component {
   }
 
   @autobind
+  getTopicKeyWords (index) {
+    return <div>
+      <p>{index}</p>
+      <p>Content</p>
+    </div>
+  }
+
+  @autobind
   drawCheckbox () {
     return <div className={styles.relativeTrendCheckedBox}>
       <div style={{width: 222, maLeft: 10}}>
@@ -235,7 +252,17 @@ export default class AbsoluteTrend extends React.Component {
           </Checkbox>
         </div>
         <br />
-        <CheckboxGroup options={this.state.topicsName} value={this.state.checkedTopics} onChange={this.onTopicChange} />
+        {
+          this.state.topicsName.map((topicName, index) => (
+            <Popover content={this.getTopicKeyWords(index)} title={topicName}>
+              <Checkbox
+                checked={this.state.checkedTopics.has(topicName)}
+                onChange={this.onTopicChange(topicName)}>
+                {topicName}
+              </Checkbox>
+            </Popover>
+          ))
+        }
       </div>
 
       <div style={{width: 222}}>
