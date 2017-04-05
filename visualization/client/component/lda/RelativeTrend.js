@@ -168,6 +168,7 @@ export default class RelativeTrend extends React.Component {
       })
   }
 
+  @autobind
   isDataLoaded () {
     return !_.isEmpty(this.state.topicsName)
   }

@@ -13,6 +13,8 @@ import { checkStatus, serverAddress } from '../../util'
 const rawDateFormat = 'YYYY-MM-DD'
 const dateFormat = 'YYYY-MM'
 
+const refName = 'AbsoluteTrend'
+
 const getOption = ({topic, trend}) => ({
   title: {
     text: '绝对趋势',
@@ -106,21 +108,26 @@ export default class AbsoluteTrend extends React.Component {
     this.myChart = echarts.init(this.refs.AbsoluteTrend)
   }
 
+  componentDidUpdate () {
+    if (this.isDataLoaded()) {
+      const option = getOption(this.state)
+      this.myChart.setOption(option)
+    }
+  }
+
   @autobind
-  drawAbsoluteTrend () {
-    const option = getOption(this.state)
-    this.myChart.setOption(option)
+  isDataLoaded () {
+    return !_.isEmpty(this.state.trend) && !_.isEmpty(this.state.topic)
   }
 
   render () {
     return <div
-      className={styles.container}
-      ref='AbsoluteTrend'>
-      <div>
-        {_.isEmpty(this.state.trend) && _.isEmpty(this.state.topic)
-        ? <Loading />
-        : this.drawAbsoluteTrend()}
-      </div>
+      className={styles.container}>
+      <div
+        className={styles.palette}
+        ref={refName}
+      />
+      {!this.isDataLoaded() || <Loading />}
     </div>
   }
 }
