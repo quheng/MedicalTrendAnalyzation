@@ -197,9 +197,11 @@ export default class AbsoluteTrend extends React.Component {
     return <div
       className={styles.container}
       ref='AbsoluteTrend'>
-      {_.isEmpty(this.state.trend)
+      <div>
+        {_.isEmpty(this.state.trend)
         ? <Loading />
         : this.drawAbsoluteTrend()}
+      </div>
     </div>
   }
 }

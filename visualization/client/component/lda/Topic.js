@@ -88,9 +88,11 @@ export default class Topic extends React.Component {
     return <div
       className={styles.container}
       ref='Topic'>
-      {_.isEmpty(this.state.trend) && _.isEmpty(this.state.topic)
+      <div>
+        {_.isEmpty(this.state.trend) && _.isEmpty(this.state.topic)
         ? <Loading />
         : this.drawTopic()}
+      </div>
     </div>
   }
 }

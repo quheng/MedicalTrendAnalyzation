@@ -117,9 +117,11 @@ export default class AbsoluteTrend extends React.Component {
     return <div
       className={styles.container}
       ref='RelativeTrend'>
-      {_.isEmpty(this.state.trend) && _.isEmpty(this.state.topic)
+      <div>
+        {_.isEmpty(this.state.trend) && _.isEmpty(this.state.topic)
         ? <Loading />
         : this.drawRelativeTrend()}
+      </div>
     </div>
   }
 }

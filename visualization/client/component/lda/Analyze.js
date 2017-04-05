@@ -84,9 +84,11 @@ export default class Analyze extends React.Component {
         <DynamicFieldSet analyze={this.analyze} />
       </div>
       <div ref='Analyze' style={{width: '60%', height: '100%'}}>
-        {_.isEmpty(this.state.topic)
+        <div>
+          {_.isEmpty(this.state.topic)
           ? <Loading />
           : this.drawAnalyze()}
+        </div>
       </div>
     </div>
   }
