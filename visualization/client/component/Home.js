@@ -48,7 +48,7 @@ class Home extends Component {
   constructor () {
     super()
     this.state = {
-      func: FUNC.ldaAbsoluteTrend
+      func: FUNC.ldaAnalyze
     }
   }
 

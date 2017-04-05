@@ -3,50 +3,63 @@ import echarts from 'echarts'
 import _ from 'lodash'
 import fetch from 'isomorphic-fetch'
 import styles from './Main.css'
-import Loading from '../Loading'
 import DynamicFieldSet from './DynamicFieldSet'
 
 import { autobind } from 'react-decoration'
 import { checkStatus, serverAddress } from '../../util'
 
-const getOption = ({ topic, results }) => ({
+const refName = 'Analyze'
+
+const getOption = ({ topicList, results }) => ({
   title: {
     text: '分析结果',
-    left: 100
+    left: 88
   },
   tooltip: {},
   legend: {
     data: results.map((result, index) => `文章 ${index + 1}`)
   },
   radar: {
-    indicator: topic
+    indicator: topicList
   },
   series: [{
-    name: '预算 vs 开销（Budget vs spending）',
     type: 'radar',
     data: results.map((result, index) => ({name: `文章 ${index + 1}`, value: result}))
   }]
 })
 
 const transformData = (rawData) => {
-  return _.map(rawData, (value, index) => ({name: `主题${index + 1}`}))
+  return _.map(rawData, (value, index) => ({name: `主题${index + 1}`, max: 1}))
 }
 
 export default class Analyze extends React.Component {
   constructor () {
     super()
     this.state = {
-      trend: [],
+      topicList: [],
       results: []
     }
     fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
-      .then((topic) => this.setState({...this.state, topic: transformData(topic)}))
+      .then((topicList) => this.setState({...this.state, topicList: transformData(topicList)}))
   }
 
   componentDidMount () {
-    this.myChart = echarts.init(this.refs.Analyze)
+    this.myChart = echarts.init(this.refs[refName])
+    console.log(this.myChart)
+  }
+
+  componentDidUpdate () {
+    if (this.isDataLoaded()) {
+      const option = getOption(this.state)
+      this.myChart.setOption(option)
+    }
+  }
+
+  @autobind
+  isDataLoaded () {
+    return !_.isEmpty(this.state.topicList)
   }
 
   @autobind
@@ -72,24 +85,12 @@ export default class Analyze extends React.Component {
       })
   }
 
-  @autobind
-  drawAnalyze () {
-    const option = getOption(this.state)
-    this.myChart.setOption(option)
-  }
-
   render () {
     return <div className={styles.container}>
       <div className={styles.dynamicFieldSet}>
         <DynamicFieldSet analyze={this.analyze} />
       </div>
-      <div ref='Analyze' style={{width: '60%', height: '100%'}}>
-        <div>
-          {_.isEmpty(this.state.topic)
-          ? <Loading />
-          : this.drawAnalyze()}
-        </div>
-      </div>
+      <div ref={refName} style={{width: '60%', height: '100%'}} />
     </div>
   }
 }
