@@ -15,7 +15,16 @@ const getOption = ({ topicList, results }) => ({
     text: '分析结果',
     left: 88
   },
-  tooltip: {},
+  tooltip: {
+    formatter: (item) => {
+      const data = item.data
+      const res = [data.name]
+      data.value.forEach((topic, index) => {
+        res.push(`主题${index + 1} ${topicList[index].keywords}: ${topic}`)
+      })
+      return res.join('<br>')
+    }
+  },
   legend: {
     data: results.map((result, index) => `文章 ${index + 1}`)
   },
@@ -29,7 +38,7 @@ const getOption = ({ topicList, results }) => ({
 })
 
 const transformData = (rawData) => {
-  return _.map(rawData, (value, index) => ({name: `主题${index + 1}:${value}`, max: 1}))
+  return _.map(rawData, (value, index) => ({name: `主题${index + 1}`, max: 1, keywords: value}))
 }
 
 export default class Analyze extends React.Component {
