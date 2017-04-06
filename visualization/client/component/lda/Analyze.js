@@ -29,7 +29,7 @@ const getOption = ({ topicList, results }) => ({
 })
 
 const transformData = (rawData) => {
-  return _.map(rawData, (value, index) => ({name: `主题${index + 1}`, max: 1}))
+  return _.map(rawData, (value, index) => ({name: `主题${index + 1}:${value}`, max: 1}))
 }
 
 export default class Analyze extends React.Component {
