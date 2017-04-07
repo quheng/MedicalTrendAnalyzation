@@ -1,5 +1,5 @@
 {
-  "max_df": 0.08,
+  "max_df": 0.8,
   "min_df": 0.01,
   "topic_amount": 5,
   "topic_keywords": 7,
