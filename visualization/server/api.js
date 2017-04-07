@@ -8,8 +8,6 @@ const ldaTopicPath = '../data/lda/topic.json'
 const ldaDocInfoPath = '../data/lda/doc.json'
 
 const wordsRelationship = JSON.parse(fs.readFileSync(wordsRelationshipPath))
-const ldaDocInfo = JSON.parse(fs.readFileSync(ldaDocInfoPath))
-const ldaTopic = JSON.parse(fs.readFileSync(ldaTopicPath))
 
 const apiRouter = express.Router()
 
@@ -18,11 +16,11 @@ apiRouter.get('/words-relationship/:limit', (req, res) => {
 })
 
 apiRouter.get('/lda-topic', (req, res) => {
-  res.json(ldaTopic)
+  res.sendFile(ldaTopicPath)
 })
 
 apiRouter.get('/lda-doc', (req, res) => {
-  res.json(ldaDocInfo)
+  res.sendFile(ldaDocInfoPath)
 })
 
 const uint8ArrayToString = (data) => {
@@ -32,7 +30,6 @@ const uint8ArrayToString = (data) => {
 apiRouter.post('/lda-predict', (req, res) => {
   const process = spawn('python', ['../process/LDA_predict.py', ...req.body])
   process.stdout.on('data', function (data) {
-    'use strict'
     res.send(uint8ArrayToString(data))
   })
 })
