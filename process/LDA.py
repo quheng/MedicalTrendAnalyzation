@@ -69,7 +69,7 @@ def __build_lda_model(tf, max_iter, tf_feature_names, default_topic_amount):
     min_perplexity = -1
     lda = None
 
-    for index in range(2, 11):
+    for index in range(3, 11):
         lda_model = LatentDirichletAllocation(n_topics=index,
                                               learning_method='online',
                                               max_iter=max_iter,
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     max_df = config['max_df']
     min_df = config['min_df']
-    topic_amount = config['topic_amout']
+    topic_amount = config['topic_amount'] if 'topic_amount' in config else None
     topic_keywords = config['topic_keywords']
     max_iter = config['max_iter']
     is_saving = 'is_saving' in config and config['is_saving']
@@ -119,6 +119,7 @@ if __name__ == '__main__':
 
     lda_model_list, topic_amount, lda = __build_lda_model(tf, max_iter, vectorizer.get_feature_names(), topic_amount)
     config['model_info'] = lda_model_list
+    config['topic_amount'] = topic_amount
 
     if is_saving:
         logging.info('saving model')
