@@ -18,7 +18,7 @@ from util import LDA_MODEL_PATH
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
-config = json.load(open(os.path.join(BASE_DIR, 'process', 'LDA_config.json'), 'w'))
+config = json.load(open(os.path.join(BASE_DIR, 'process', 'LDA_config.json'), 'r'))
 max_df = config['max_df']
 min_df = config['min_df']
 topic_amount = config['topic_amount']
