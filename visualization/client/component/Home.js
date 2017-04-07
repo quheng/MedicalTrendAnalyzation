@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import styles from './Home.css'
-import LdaWordsCloud from './lda/WordsCloud'
+import WordsCloud from './WordsCloud'
 import LdaAbsoluteTrend from './lda/AbsoluteTrend'
 import LdaRelativeTrend from './lda/RelativeTrend'
 import LdaTopic from './lda/Topic'
@@ -11,7 +11,7 @@ import { autobind } from 'react-decoration'
 const SubMenu = Menu.SubMenu
 
 const FUNC = {
-  ldaWordCloud: 'ldaWordCloud',
+  wordCloud: 'wordCloud',
   ldaAbsoluteTrend: 'ldaAbsoluteTrend',
   ldaRelativeTrend: 'ldaRelativeTrend',
   ldaTopic: 'ldaTopic',
@@ -29,8 +29,10 @@ class Sider extends React.Component {
         defaultOpenKeys={['lda']}
         mode='inline'
       >
+        <SubMenu key='wordCloud' title={<span><Icon type='cloud-o' />词云</span>}>
+          <Menu.Item key={FUNC.wordCloud}>词云</Menu.Item>
+        </SubMenu>
         <SubMenu key='lda' title={<span><Icon type='api' />LDA</span>}>
-          <Menu.Item key={FUNC.ldaWordCloud}>词云</Menu.Item>
           <Menu.Item key={FUNC.ldaTopic}>主题关系</Menu.Item>
           <Menu.Item key={FUNC.ldaAbsoluteTrend}>绝对趋势</Menu.Item>
           <Menu.Item key={FUNC.ldaRelativeTrend}>相对趋势</Menu.Item>
@@ -48,15 +50,15 @@ class Home extends Component {
   constructor () {
     super()
     this.state = {
-      func: FUNC.ldaWordCloud
+      func: FUNC.wordCloud
     }
   }
 
   @autobind
   getPanel () {
     switch (this.state.func) {
-      case FUNC.ldaWordCloud:
-        return <LdaWordsCloud />
+      case FUNC.wordCloud:
+        return <WordsCloud />
       case FUNC.ldaAbsoluteTrend:
         return <LdaAbsoluteTrend />
       case FUNC.ldaRelativeTrend:
