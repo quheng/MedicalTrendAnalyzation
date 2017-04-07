@@ -29,14 +29,14 @@ class Sider extends React.Component {
         defaultOpenKeys={['lda']}
         mode='inline'
       >
-        <SubMenu key='lda' title={<span><Icon type='api' /><span>LDA</span></span>}>
+        <SubMenu key='lda' title={<span><Icon type='api' />LDA</span>}>
           <Menu.Item key={FUNC.ldaWordCloud}>词云</Menu.Item>
           <Menu.Item key={FUNC.ldaTopic}>主题关系</Menu.Item>
           <Menu.Item key={FUNC.ldaAbsoluteTrend}>绝对趋势</Menu.Item>
           <Menu.Item key={FUNC.ldaRelativeTrend}>相对趋势</Menu.Item>
           <Menu.Item key={FUNC.ldaAnalyze}>主题分析</Menu.Item>
         </SubMenu>
-        <SubMenu key='tot' title={<span><Icon type='rocket' /><span>TOT</span></span>}>
+        <SubMenu key='tot' title={<span><Icon type='rocket' />TOT</span>}>
           <Menu.Item key='tot-todo'>敬请期待</Menu.Item>
         </SubMenu>
       </Menu>
