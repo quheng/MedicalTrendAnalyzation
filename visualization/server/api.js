@@ -1,11 +1,13 @@
 import express from 'express'
 import _ from 'lodash'
 import fs from 'fs'
+import path from 'path'
+
 import { spawn } from 'child_process'
 
-const wordsRelationshipPath = '../data/words_relationship.json'
-const ldaTopicPath = '../data/lda/topic.json'
-const ldaDocInfoPath = '../data/lda/doc.json'
+const wordsRelationshipPath = path.join(__dirname, '..', '..', 'data', 'words_relationship.json')
+const ldaTopicPath = path.join(__dirname, '..', '..', 'data', 'lda', 'topic.json')
+const ldaDocInfoPath = path.join(__dirname, '..', '..', 'data', 'lda', 'doc.json')
 
 const wordsRelationship = JSON.parse(fs.readFileSync(wordsRelationshipPath))
 
