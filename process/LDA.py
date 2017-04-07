@@ -21,7 +21,7 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 CONFIG_PATH = os.path.join(BASE_DIR, 'process', 'LDA_config.json')
 MIN_TOPIC_AMOUNT = 3
-MAX_TOPIC_AMOUNT = 10
+MAX_TOPIC_AMOUNT = 3
 
 
 def __get_row_data():
@@ -105,7 +105,7 @@ def __set_lda_info_to_file_info(file_info, tf, lda):
         item['lda'] = lda_model[index].tolist()
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
+    if len(sys.argv) > 4:
         config = json.loads(sys.argv[1])
     else:
         config = json.load(open(CONFIG_PATH, 'r'))
