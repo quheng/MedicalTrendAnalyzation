@@ -9,14 +9,9 @@ import jieba
 import json
 
 from tqdm import tqdm
-
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-RAW_DATA_DIR = os.path.join(BASE_DIR, 'raw_data')
-BAG_OF_WORDS_DIR = os.path.join(BASE_DIR, 'data/bag_of_words.json')
-STOP_WORDS_DIR = os.path.join(BASE_DIR, 'process/stop_words.txt')
-
-STOP_WORDS = set(line.strip() for line in open(STOP_WORDS_DIR, 'r', encoding='utf-8').readlines())
-STOP_WORDS.add('生物谷')
+from util import STOP_WORDS
+from util import RAW_DATA_DIR
+from util import BAG_OF_WORDS_PATH
 
 
 def build_bag_of_words_model():
@@ -48,7 +43,7 @@ def build_bag_of_words_model():
                 except Exception as exception:
                     err += 1
                     print(f'Error during process {filename}, error message: {exception}')
-    with open(BAG_OF_WORDS_DIR, 'w', encoding='utf-8') as result_file:
+    with open(BAG_OF_WORDS_PATH, 'w', encoding='utf-8') as result_file:
         json.dump(bag_of_word, result_file, ensure_ascii=False)
     print(f'finish, {count} success, {err} failed')
 

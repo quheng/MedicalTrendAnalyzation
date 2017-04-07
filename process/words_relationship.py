@@ -14,15 +14,13 @@ import os
 import json
 
 from tqdm import tqdm
-
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-BAG_OF_WORDS_DIR = os.path.join(BASE_DIR, 'data/bag_of_words.json')
-WORDS_RELATION_SHIP_DIR = os.path.join(BASE_DIR, 'data/words_relationship.json')
+from util import BAG_OF_WORDS_PATH
+from util import WORDS_RELATION_SHIP_PATH
 
 
 def build_words_relation_ship():
     words_relation_ship = {}
-    with open(BAG_OF_WORDS_DIR, 'r', encoding='utf-8') as bag_of_words_file:
+    with open(BAG_OF_WORDS_PATH, 'r', encoding='utf-8') as bag_of_words_file:
         bag_of_words = tqdm(json.load(bag_of_words_file).items())
         for filename, words in bag_of_words:
             bag_of_words.set_description('Processing %s' % filename)
@@ -43,7 +41,7 @@ def build_words_relation_ship():
                     # }
                     word_amount = 0
                 words_relation_ship[word] = word_amount
-    with open(WORDS_RELATION_SHIP_DIR, 'w', encoding='utf-8') as words_relation_ship_file:
+    with open(WORDS_RELATION_SHIP_PATH, 'w', encoding='utf-8') as words_relation_ship_file:
         json.dump(sorted(words_relation_ship.items(), key=lambda d:d[1], reverse=True), words_relation_ship_file, ensure_ascii=False)
 
 if __name__ == '__main__':
