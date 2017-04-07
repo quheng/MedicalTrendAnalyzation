@@ -1,0 +1,7 @@
+{
+  "max_df": 0.08,
+  "min_df": 0.01,
+  "topic_amount": 5,
+  "topic_keywords": 7,
+  "max_iter": 5
+}
