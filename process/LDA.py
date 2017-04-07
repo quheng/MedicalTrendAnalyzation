@@ -20,6 +20,9 @@ from util import LDA_MODEL_PATH
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 CONFIG_PATH = os.path.join(BASE_DIR, 'process', 'LDA_config.json')
+MIN_TOPIC_AMOUNT = 3
+MAX_TOPIC_AMOUNT = 10
+
 
 def __get_row_data():
     """
@@ -69,7 +72,7 @@ def __build_lda_model(tf, max_iter, tf_feature_names, default_topic_amount):
     min_perplexity = -1
     lda = None
 
-    for index in range(3, 11):
+    for index in range(MIN_TOPIC_AMOUNT, MAX_TOPIC_AMOUNT + 1):
         lda_model = LatentDirichletAllocation(n_topics=index,
                                               learning_method='online',
                                               max_iter=max_iter,
@@ -128,7 +131,7 @@ if __name__ == '__main__':
         vectorizer.tokenizer = None  # we can not pickle jieba due to lock
         pickle.dump(lda, open(LDA_MODEL_PATH, 'wb'))
         pickle.dump(vectorizer, open(VEC_MODEL_PATH, 'wb'))
-        json.dump(lda_model_list[topic_amount]['topic_list'], open(TOPIC_PATH, 'w'), ensure_ascii=False)
+        json.dump(lda_model_list[topic_amount - MIN_TOPIC_AMOUNT]['topic_list'], open(TOPIC_PATH, 'w'), ensure_ascii=False)
         json.dump(file_info, open(DOC_PATH, 'w'), ensure_ascii=False)
         json.dump(config, open(CONFIG_PATH, 'w'), ensure_ascii=False)
     print(json.dumps(config, ensure_ascii=False))
