@@ -1,7 +1,1 @@
-{
-  "max_df": 0.8,
-  "min_df": 0.01,
-  "topic_amount": 5,
-  "topic_keywords": 7,
-  "max_iter": 5
-}
+{"max_df": 0.4, "min_df": 0.05, "topic_amount": 5, "topic_keywords": 7, "max_iter": 5, "is_saving": true, "perplexity": 11088.036699509297}

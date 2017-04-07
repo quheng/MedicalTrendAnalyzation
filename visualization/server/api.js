@@ -8,6 +8,7 @@ import { spawn } from 'child_process'
 const wordsRelationshipPath = path.join(__dirname, '..', '..', 'data', 'words_relationship.json')
 const ldaTopicPath = path.join(__dirname, '..', '..', 'data', 'lda', 'topic.json')
 const ldaDocInfoPath = path.join(__dirname, '..', '..', 'data', 'lda', 'doc.json')
+const ldaConfigPath = path.join(__dirname, '..', '..', 'process', 'LDA_config.json')
 
 const wordsRelationship = JSON.parse(fs.readFileSync(wordsRelationshipPath))
 
@@ -33,6 +34,23 @@ apiRouter.post('/lda-predict', (req, res) => {
   const process = spawn('python', ['../process/LDA_predict.py', ...req.body])
   process.stdout.on('data', function (data) {
     res.send(uint8ArrayToString(data))
+  })
+})
+
+apiRouter.post('/lda-config', (req, res) => {
+  const process = spawn('python', ['../process/LDA.py', JSON.stringify(req.body)])
+  process.stdout.on('data', function (data) {
+    res.json({
+      config: uint8ArrayToString(data),
+      keywords: JSON.parse(fs.readFileSync(ldaTopicPath))
+    })
+  })
+})
+
+apiRouter.get('/lda-config', (req, res) => {
+  res.json({
+    config: JSON.parse(fs.readFileSync(ldaConfigPath)),
+    keywords: JSON.parse(fs.readFileSync(ldaTopicPath))
   })
 })
 
