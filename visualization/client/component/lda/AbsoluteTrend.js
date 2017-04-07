@@ -22,7 +22,7 @@ const getSeries = (topicsName, topicValues) => (
     data: topicValues[topicName]
   })))
 
-const getOption = ({ topicsName, categoryData, topicValues }) => {
+const getOption = ({ topicsName, categoryData, topicValues, topicKeywords }) => {
   return {
     title: {
       text: '绝对趋势',
@@ -32,6 +32,12 @@ const getOption = ({ topicsName, categoryData, topicValues }) => {
       trigger: 'axis',
       axisPointer: {
         type: 'shadow'
+      },
+      formatter: (topicList) => {
+        const res = topicList.map((topic, index) => (
+          `主题${index + 1} ${topicKeywords[index]}: ${topic.data}`
+        ))
+        return res.join('<br>')
       }
     },
     legend: {
@@ -95,7 +101,7 @@ export default class AbsoluteTrend extends React.Component {
   constructor () {
     super()
     this.state = {
-      topicKeyWords: [],
+      topicKeywords: [],
       topicValues: [],
       categoryData: [],
       topicsName: []
@@ -103,7 +109,7 @@ export default class AbsoluteTrend extends React.Component {
     fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
-      .then((topicKeyWords) => this.setState({...this.state, topicKeyWords}))
+      .then((topicKeywords) => this.setState({...this.state, topicKeywords}))
 
     fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
       .then(checkStatus)
@@ -128,8 +134,6 @@ export default class AbsoluteTrend extends React.Component {
 
   componentDidUpdate () {
     const option = getOption(this.state)
-    console.log(option)
-    console.log(this.state)
     this.myChart.setOption(option)
   }
 
