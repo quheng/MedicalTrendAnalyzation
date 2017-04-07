@@ -53,24 +53,46 @@ def __vectorized(raw_data, max_df, min_df):
     return vectorizer, tf
 
 
-def __build_lda_model(tf, topic_amount, max_iter):
-    t0 = time.time()
-    logging.info('building lda model')
-    lda = LatentDirichletAllocation(n_topics=topic_amount,
-                                    learning_method='online',
-                                    max_iter=max_iter,
-                                    learning_offset=50.,
-                                    random_state=0)
-    lda.fit(tf)
-    logging.info(f'done in {time.time() - t0}')
-    return lda
-
-
-def __topic_list(lda, feature_names):
+def __topic_list(lda_model, feature_names):
     topic_list = []
-    for topic_idx, topic in enumerate(lda.components_):
+    for topic_idx, topic in enumerate(lda_model.components_):
         topic_list.append([feature_names[i] for i in topic.argsort()[:-topic_keywords - 1:-1]])
     return topic_list
+
+
+def __build_lda_model(tf, max_iter, tf_feature_names, default_topic_amount):
+    t0 = time.time()
+    logging.info('building lda model')
+    lda_model_list = []
+
+    topic_amount = 0
+    min_perplexity = -1
+    lda = None
+
+    for index in range(2, 11):
+        lda_model = LatentDirichletAllocation(n_topics=index,
+                                              learning_method='online',
+                                              max_iter=max_iter,
+                                              learning_offset=50.,
+                                              random_state=0)
+        lda_model.fit(tf)
+        perplexity = lda_model.perplexity(tf)
+        topic_list = __topic_list(lda_model, tf_feature_names)
+        lda_model_list.append({
+            'perplexity': perplexity,
+            'topic_list': topic_list
+        })
+        if default_topic_amount and index == default_topic_amount:
+            topic_amount = default_topic_amount
+            lda = lda_model
+
+        if perplexity < min_perplexity or min_perplexity == -1:
+            topic_amount = index
+            min_perplexity = perplexity
+            lda = lda_model
+
+    logging.info(f'done in {time.time() - t0}')
+    return lda_model_list, topic_amount, lda
 
 
 def __set_lda_info_to_file_info(file_info, tf, lda):
@@ -87,25 +109,25 @@ if __name__ == '__main__':
 
     max_df = config['max_df']
     min_df = config['min_df']
-    topic_amount = config['topic_amount']
+    topic_amount = config['topic_amout']
     topic_keywords = config['topic_keywords']
     max_iter = config['max_iter']
     is_saving = 'is_saving' in config and config['is_saving']
 
     file_info, raw_data = __get_row_data()
-
     vectorizer, tf = __vectorized(raw_data, max_df, min_df)
-    lda = __build_lda_model(tf, topic_amount, max_iter)
-    topic_list = __topic_list(lda, vectorizer.get_feature_names())
-    __set_lda_info_to_file_info(file_info, tf, lda)
-    config['perplexity'] = lda.perplexity(tf)
+
+    lda_model_list, topic_amount, lda = __build_lda_model(tf, max_iter, vectorizer.get_feature_names(), topic_amount)
+    config['model_info'] = lda_model_list
 
     if is_saving:
         logging.info('saving model')
+        __set_lda_info_to_file_info(file_info, tf, lda)
+
         vectorizer.tokenizer = None  # we can not pickle jieba due to lock
         pickle.dump(lda, open(LDA_MODEL_PATH, 'wb'))
         pickle.dump(vectorizer, open(VEC_MODEL_PATH, 'wb'))
-        json.dump(topic_list, open(TOPIC_PATH, 'w'), ensure_ascii=False)
+        json.dump(lda_model_list[topic_amount]['topic_list'], open(TOPIC_PATH, 'w'), ensure_ascii=False)
         json.dump(file_info, open(DOC_PATH, 'w'), ensure_ascii=False)
         json.dump(config, open(CONFIG_PATH, 'w'), ensure_ascii=False)
     print(json.dumps(config, ensure_ascii=False))
