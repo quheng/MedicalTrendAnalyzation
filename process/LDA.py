@@ -21,7 +21,7 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 CONFIG_PATH = os.path.join(BASE_DIR, 'process', 'LDA_config.json')
 MIN_TOPIC_AMOUNT = 3
-MAX_TOPIC_AMOUNT = 5
+MAX_TOPIC_AMOUNT = 10
 
 
 def __get_row_data():
@@ -56,14 +56,14 @@ def __vectorized(raw_data, max_df, min_df):
     return vectorizer, tf
 
 
-def __topic_list(lda_model, feature_names):
+def __topic_list(lda_model, feature_names, topic_keywords):
     topic_list = []
     for topic_idx, topic in enumerate(lda_model.components_):
         topic_list.append([feature_names[i] for i in topic.argsort()[:-topic_keywords - 1:-1]])
     return topic_list
 
 
-def __build_lda_model(tf, max_iter, tf_feature_names, default_topic_amount):
+def __build_lda_model(tf, max_iter, tf_feature_names, topic_keywords, default_topic_amount):
     t0 = time.time()
     logging.info('building lda model')
     lda_model_list = []
@@ -80,7 +80,7 @@ def __build_lda_model(tf, max_iter, tf_feature_names, default_topic_amount):
                                               random_state=0)
         lda_model.fit(tf)
         perplexity = lda_model.perplexity(tf)
-        topic_list = __topic_list(lda_model, tf_feature_names)
+        topic_list = __topic_list(lda_model, tf_feature_names, topic_keywords)
         lda_model_list.append({
             'perplexity': perplexity,
             'topic_list': topic_list
@@ -89,7 +89,7 @@ def __build_lda_model(tf, max_iter, tf_feature_names, default_topic_amount):
             topic_amount = default_topic_amount
             lda = lda_model
 
-        if perplexity < min_perplexity or min_perplexity == -1:
+        if not default_topic_amount and perplexity < min_perplexity or min_perplexity == -1:
             topic_amount = index
             min_perplexity = perplexity
             lda = lda_model
@@ -105,7 +105,7 @@ def __set_lda_info_to_file_info(file_info, tf, lda):
         item['lda'] = lda_model[index].tolist()
 
 if __name__ == '__main__':
-    if len(sys.argv) > 4:
+    if len(sys.argv) > 1:
         config = json.loads(sys.argv[1])
     else:
         config = json.load(open(CONFIG_PATH, 'r'))
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     file_info, raw_data = __get_row_data()
     vectorizer, tf = __vectorized(raw_data, max_df, min_df)
 
-    lda_model_list, topic_amount, lda = __build_lda_model(tf, max_iter, vectorizer.get_feature_names(), topic_amount)
+    lda_model_list, topic_amount, lda = __build_lda_model(tf, max_iter, vectorizer.get_feature_names(),topic_keywords, topic_amount)
     config['model_info'] = lda_model_list
     config['topic_amount'] = topic_amount
 

@@ -24,7 +24,7 @@ const getOption = ({ config }) => ({
   },
   xAxis: {
     min: 2,
-    max: 10,
+    max: 11,
     splitLine: {
       lineStyle: {
         type: 'dashed'
@@ -130,7 +130,7 @@ class ConfigForm extends React.Component {
 
         <FormItem>
           <Button type='primary' htmlType='submit'>
-            保存
+            生成
           </Button>
         </FormItem>
       </Form>
@@ -183,17 +183,30 @@ export default class AbsoluteTrend extends React.Component {
 
   @autobind
   addPercent () {
-    this.setState({...this.state, percent: this.state.percent + 1})
-    if (this.state.percent < 100) {
-      setTimeout(this.addPercent, 10)
+    if (this.state.percent < 99 || !_.isEmpty(this.state.config)) {
+      this.setState({...this.state, percent: this.state.percent + 1})
     }
+    setTimeout(this.addPercent, 320)
   }
 
   @autobind
   submitParams (value) {
     value['is_saving'] = true
-    this.setState({...this.state, config: value, showModal: true, percent: 0})
-    setTimeout(this.addPercent, 10)
+    fetch(`${serverAddress}/lda-config`, {
+      method: 'POST',
+      body: JSON.stringify(value),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(checkStatus)
+      .then((res) => (res.json()))
+      .then((results) => {
+        this.myChart.hideLoading()
+        this.setState({...this.state, config: transformData(results)})
+      })
+
+    this.setState({...this.state, config: {}, showModal: true, percent: 0})
+    setTimeout(this.addPercent, 320)
   }
 
   render () {
@@ -201,7 +214,7 @@ export default class AbsoluteTrend extends React.Component {
       className={styles.container}>
       <Modal
         visible={this.state.showModal}
-        title={this.state.percent > 99 ? '保存成功' : '模型保存中'}
+        title={this.state.percent > 99 ? '保存成功' : '模型生成中'}
         footer={this.state.percent > 99
           ? <Button
             key='submit'
