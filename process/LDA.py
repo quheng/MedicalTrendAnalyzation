@@ -21,7 +21,7 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 CONFIG_PATH = os.path.join(BASE_DIR, 'process', 'LDA_config.json')
 MIN_TOPIC_AMOUNT = 3
-MAX_TOPIC_AMOUNT = 3
+MAX_TOPIC_AMOUNT = 5
 
 
 def __get_row_data():
