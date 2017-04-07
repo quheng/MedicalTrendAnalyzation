@@ -9,98 +9,117 @@ import styles from './Main.css'
 import { autobind } from 'react-decoration'
 import { checkStatus, serverAddress } from '../../util'
 
+const refName = 'AbsoluteTrend'
+
 const rawDateFormat = 'YYYY-MM-DD'
 const dateFormat = 'YYYY-MM'
 
-const refName = 'AbsoluteTrend'
+const getSeries = (topicsName, topicValues) => (
+  topicsName.map(topicName => ({
+    name: topicName,
+    type: 'bar',
+    stack: '主题',
+    data: topicValues[topicName]
+  })))
 
-const getOption = ({topic, trend}) => ({
-  title: {
-    text: '绝对趋势',
-    left: 100
-  },
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'line',
-      lineStyle: {
-        color: 'rgba(0,0,0,0.2)',
-        width: 1,
-        type: 'solid'
-      }
-    }
-  },
-  legend: {
-    data: topic.map((words, index) => `主题${index + 1}`)
-  },
-  singleAxis: {
-    top: 50,
-    bottom: 50,
-    axisTick: {},
-    axisLabel: {},
-    type: 'time',
-    axisPointer: {
-      animation: true,
-      label: {
-        show: true
+const getOption = ({ topicsName, categoryData, topicValues }) => {
+  return {
+    title: {
+      text: '绝对趋势',
+      left: 100
+    },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
       }
     },
-    splitLine: {
-      show: true,
-      lineStyle: {
-        type: 'dashed',
-        opacity: 0.2
+    legend: {
+      data: topicsName
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: [
+      {
+        type: 'category',
+        data: categoryData
       }
-    }
-  },
-  series: [
-    {
-      type: 'themeRiver',
-      itemStyle: {
-        emphasis: {
-          shadowBlur: 20,
-          shadowColor: 'rgba(0, 0, 0, 0.8)'
-        }
-      },
-      data: trend
-    }
-  ]
-})
+    ],
+    yAxis: [
+      {
+        type: 'value'
+      }
+    ],
+    series: getSeries(topicsName, topicValues)
+  }
+}
+
+const topicName = (index) => (`主题${index + 1}`)
 
 const transformData = (rawData) => {
-  const topicAmountList = [{}, {}, {}, {}, {}] // todo refactor
+  const totalTrend = {}
+  const topicTrend = []
+
   rawData.forEach(data => {
+    const date = moment(data.date, rawDateFormat).format(dateFormat)
+    totalTrend[date] = _.get(totalTrend, date, 0) + 1
     const lda = data.lda
     const topic = lda.indexOf(Math.max(...lda))
-    const date = moment(data.date, rawDateFormat).format(dateFormat)
-
-    topicAmountList.forEach((topicAmount, index) => {
-      if (index === topic) {
-        topicAmount[date] = [date, _.get(topicAmount, date, ['', 0, ''])[1] + 1, `主题${index + 1}`]
-      } else {
-        topicAmount[date] = [date, _.get(topicAmount, date, ['', 0, ''])[1], `主题${index + 1}`]
-      }
-    })
+    if (_.isEmpty(topicTrend[topic])) {
+      topicTrend[topic] = {}
+      topicTrend[topic][date] = 1
+    } else {
+      topicTrend[topic][date] = _.get(topicTrend[topic], date, 0) + 1
+    }
   })
 
-  return _.concat(...topicAmountList.map(_.values))
+  const categoryData = []
+  const topicsName = topicTrend.map((topic, index) => (topicName(index)))
+  const topicValues = {}
+  topicsName.forEach(topicName => { topicValues[topicName] = [] })
+
+  _.forIn(totalTrend, (totalAmount, date) => {
+    categoryData.push(date)
+    topicTrend.forEach((topic, index) => {
+      topicValues[topicName(index)].push(_.get(topic, date, 0))
+    })
+  })
+  return {categoryData, topicValues, topicsName}
 }
 
 export default class AbsoluteTrend extends React.Component {
   constructor () {
     super()
     this.state = {
-      trend: [],
-      topic: []
+      topicKeyWords: [],
+      topicValues: [],
+      categoryData: [],
+      topicsName: []
     }
-    fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
-      .then(checkStatus)
-      .then((res) => (res.json()))
-      .then((doc) => this.setState({trend: transformData(doc)}))
     fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
-      .then((topic) => this.setState({topic}))
+      .then((topicKeyWords) => this.setState({...this.state, topicKeyWords}))
+
+    fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
+      .then(checkStatus)
+      .then((res) => (res.json()))
+      .then((doc) => {
+        const data = transformData(doc)
+        this.setState({
+          ...this.state,
+          ...data
+        })
+      })
+  }
+
+  @autobind
+  isDataLoaded () {
+    return !_.isEmpty(this.state.topicsName)
   }
 
   componentDidMount () {
@@ -108,20 +127,19 @@ export default class AbsoluteTrend extends React.Component {
   }
 
   componentDidUpdate () {
-    if (this.isDataLoaded()) {
-      const option = getOption(this.state)
-      this.myChart.setOption(option)
-    }
-  }
-
-  @autobind
-  isDataLoaded () {
-    return !_.isEmpty(this.state.trend) && !_.isEmpty(this.state.topic)
+    const option = getOption(this.state)
+    console.log(option)
+    console.log(this.state)
+    this.myChart.setOption(option)
   }
 
   render () {
     return <div
-      className={styles.container}
-      ref={refName} />
+      className={styles.container}>
+      <div
+        className={styles.palette}
+        ref={refName}
+      />
+    </div>
   }
 }
