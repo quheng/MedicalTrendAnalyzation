@@ -59,8 +59,8 @@ first of all, you should make sure that you have installed `npm` and `node`, [nv
 
 now you can visit [http://0.0.0.0:2333](http://0.0.0.0:2333)
 
-## api
-### /words-relationship
+### api
+#### /words-relationship/:limit
 Due to words relationship is too big to handle, just return words amount now.
 ```
 [
@@ -68,7 +68,7 @@ Due to words relationship is too big to handle, just return words amount now.
 ]
 ```
 
-### /lda-topic
+#### /lda-topic
 Topics and words included in each topic order by weight
 ```
 [
@@ -76,10 +76,21 @@ Topics and words included in each topic order by weight
 ]
 ```
 
-### /lda-doc
+#### /lda-doc
 Doc topics model
 ```
 [
   [weight]
 ]
 ```
+
+#### /lda-predict
+put the doc waiting for predict into body with json format.
+```
+[
+  [weight]
+]
+``` 
+
+#### /lda-config
+get or post lda config
