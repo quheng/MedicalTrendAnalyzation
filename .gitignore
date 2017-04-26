@@ -1,6 +1,5 @@
 # data
-.json
-.pkl
+data/
 
 # test
 test/
