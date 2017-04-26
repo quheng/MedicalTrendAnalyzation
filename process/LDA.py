@@ -112,7 +112,10 @@ if __name__ == '__main__':
 
     max_df = config['max_df']
     min_df = config['min_df']
-    topic_amount = config['topic_amount'] if 'topic_amount' in config else None
+    topic_amount = config['topic_amount']
+    if topic_amount == 'auto':
+        topic_amount = None
+
     topic_keywords = config['topic_keywords']
     max_iter = config['max_iter']
     is_saving = 'is_saving' in config and config['is_saving']
