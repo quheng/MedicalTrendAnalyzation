@@ -224,7 +224,7 @@ export default class AbsoluteTrend extends React.Component {
       })
 
     this.setState({...this.state, config: {}, showModal: true, percent: 0})
-    setTimeout(this.addPercent, 500)
+    setTimeout(this.addPercent, 700)
   }
 
   render () {

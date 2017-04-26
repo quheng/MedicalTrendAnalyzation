@@ -69,6 +69,7 @@ def __build_lda_model(tf, max_iter, tf_feature_names, topic_keywords, topic_amou
     lda_model_list = []
     min_perplexity = -1
     lda = None
+    min_perplexity_index = 0
 
     for index in range(MIN_TOPIC_AMOUNT, MAX_TOPIC_AMOUNT + 1):
         lda_model = LatentDirichletAllocation(n_topics=index,
@@ -83,15 +84,17 @@ def __build_lda_model(tf, max_iter, tf_feature_names, topic_keywords, topic_amou
             'perplexity': perplexity,
             'topic_list': topic_list
         })
+
         if topic_amount == auto_topic_amount and index == topic_amount:
             lda = lda_model
 
         if topic_amount != auto_topic_amount and perplexity < min_perplexity or min_perplexity == -1:
             min_perplexity = perplexity
             lda = lda_model
+            min_perplexity_index = index
 
     logging.info(f'done in {time.time() - t0}')
-    return lda_model_list, lda
+    return lda_model_list, min_perplexity_index, lda
 
 
 def __set_lda_info_to_file_info(file_info, tf, lda):
@@ -116,8 +119,9 @@ if __name__ == '__main__':
     file_info, raw_data = __get_row_data()
     vectorizer, tf = __vectorized(raw_data, max_df, min_df)
 
-    lda_model_list, lda = __build_lda_model(tf, max_iter, vectorizer.get_feature_names(),topic_keywords, topic_amount)
+    lda_model_list, min_perplexity_index, lda = __build_lda_model(tf, max_iter, vectorizer.get_feature_names(),topic_keywords, topic_amount)
     config['model_info'] = lda_model_list
+    config['min_perplexity_index'] = min_perplexity_index
 
     if is_saving:
         logging.info('saving model')
@@ -126,7 +130,10 @@ if __name__ == '__main__':
         vectorizer.tokenizer = None  # we can not pickle jieba due to lock
         pickle.dump(lda, open(LDA_MODEL_PATH, 'wb'))
         pickle.dump(vectorizer, open(VEC_MODEL_PATH, 'wb'))
-        json.dump(lda_model_list[topic_amount - MIN_TOPIC_AMOUNT]['topic_list'], open(TOPIC_PATH, 'w'), ensure_ascii=False)
+        if topic_amount == auto_topic_amount:
+            json.dump(lda_model_list[min_perplexity_index - MIN_TOPIC_AMOUNT]['topic_list'], open(TOPIC_PATH, 'w'), ensure_ascii=False)
+        else:
+            json.dump(lda_model_list[topic_amount - MIN_TOPIC_AMOUNT]['topic_list'], open(TOPIC_PATH, 'w'), ensure_ascii=False)
         json.dump(file_info, open(DOC_PATH, 'w'), ensure_ascii=False)
         json.dump(config, open(CONFIG_PATH, 'w'), ensure_ascii=False)
     print(json.dumps(config, ensure_ascii=False))
