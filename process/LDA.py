@@ -22,7 +22,7 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 CONFIG_PATH = os.path.join(BASE_DIR, 'process', 'LDA_config.json')
 MIN_TOPIC_AMOUNT = 3
 MAX_TOPIC_AMOUNT = 10
-
+auto_topic_amount = 'auto'
 
 def __get_row_data():
     """
@@ -63,12 +63,10 @@ def __topic_list(lda_model, feature_names, topic_keywords):
     return topic_list
 
 
-def __build_lda_model(tf, max_iter, tf_feature_names, topic_keywords, default_topic_amount):
+def __build_lda_model(tf, max_iter, tf_feature_names, topic_keywords, topic_amount):
     t0 = time.time()
     logging.info('building lda model')
     lda_model_list = []
-
-    topic_amount = 0
     min_perplexity = -1
     lda = None
 
@@ -85,17 +83,15 @@ def __build_lda_model(tf, max_iter, tf_feature_names, topic_keywords, default_to
             'perplexity': perplexity,
             'topic_list': topic_list
         })
-        if default_topic_amount and index == default_topic_amount:
-            topic_amount = default_topic_amount
+        if topic_amount == auto_topic_amount and index == topic_amount:
             lda = lda_model
 
-        if not default_topic_amount and perplexity < min_perplexity or min_perplexity == -1:
-            topic_amount = index
+        if topic_amount != auto_topic_amount and perplexity < min_perplexity or min_perplexity == -1:
             min_perplexity = perplexity
             lda = lda_model
 
     logging.info(f'done in {time.time() - t0}')
-    return lda_model_list, topic_amount, lda
+    return lda_model_list, lda
 
 
 def __set_lda_info_to_file_info(file_info, tf, lda):
@@ -113,9 +109,6 @@ if __name__ == '__main__':
     max_df = config['max_df']
     min_df = config['min_df']
     topic_amount = config['topic_amount']
-    if topic_amount == 'auto':
-        topic_amount = None
-
     topic_keywords = config['topic_keywords']
     max_iter = config['max_iter']
     is_saving = 'is_saving' in config and config['is_saving']
@@ -123,9 +116,8 @@ if __name__ == '__main__':
     file_info, raw_data = __get_row_data()
     vectorizer, tf = __vectorized(raw_data, max_df, min_df)
 
-    lda_model_list, topic_amount, lda = __build_lda_model(tf, max_iter, vectorizer.get_feature_names(),topic_keywords, topic_amount)
+    lda_model_list, lda = __build_lda_model(tf, max_iter, vectorizer.get_feature_names(),topic_keywords, topic_amount)
     config['model_info'] = lda_model_list
-    config['topic_amount'] = topic_amount
 
     if is_saving:
         logging.info('saving model')
