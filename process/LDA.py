@@ -85,7 +85,7 @@ def __build_lda_model(tf, max_iter, tf_feature_names, topic_keywords, topic_amou
             'topic_list': topic_list
         })
 
-        if topic_amount != auto_topic_amount and index == topic_amount - MIN_TOPIC_AMOUNT:
+        if topic_amount != auto_topic_amount and index == topic_amount:
             lda = lda_model
 
         if topic_amount == auto_topic_amount and (perplexity < min_perplexity or min_perplexity == -1):
