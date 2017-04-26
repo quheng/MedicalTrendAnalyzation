@@ -62,7 +62,6 @@ const getOption = ({ config }) => ({
       }
     }
   }, {
-    name: '模拟数据',
     type: 'line',
     smooth: true,
     showSymbol: false,
@@ -160,9 +159,13 @@ const WrappedConfigForm = Form.create()(ConfigForm)
 
 const transformData = (rawData) => {
   const modelInfo = []
+  const topicAmount = rawData.topic_amount === autoTopicAmount
+    ? rawData.min_perplexity_index
+    : rawData.topic_amount
+
   rawData.model_info.forEach(model => {
     const topicList = model.topic_list
-    const weight = topicList.length === rawData.topic_amount ? 35 : 15
+    const weight = topicList.length === topicAmount ? 35 : 15
     modelInfo.push([topicList.length, model.perplexity, topicList, weight])
   })
   return {
