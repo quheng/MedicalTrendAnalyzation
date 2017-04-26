@@ -1,6 +1,6 @@
 # data
-*.json
-*.pkl
+.json
+.pkl
 
 # test
 test/
