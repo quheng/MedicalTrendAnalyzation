@@ -12,6 +12,7 @@ This is a project to do some medical trend analysis and visualization.
 1. python 3.6
 
 ***note*** the Python version must higher than 3.6.0 
+***note*** the scikit version can not be 0.18.0 and 0.18.1, just tested under 0.17.1
 
 ### dependencies
 Use `pip install -r requirements.txt` to install dependencies.
