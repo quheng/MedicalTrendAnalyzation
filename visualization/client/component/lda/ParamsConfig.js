@@ -5,11 +5,13 @@ import fetch from 'isomorphic-fetch'
 import styles from './Main.css'
 
 import { autobind } from 'react-decoration'
-import { Modal, Form, Button, Slider, Spin, message, Progress } from 'antd'
+import { Modal, Form, Button, Slider, Spin, message, Progress, Select } from 'antd'
 import { checkStatus, serverAddress } from '../../util'
 
 const refName = 'ParamsConfig'
 const FormItem = Form.Item
+const Option = Select.Option
+const autoTopicAmount = 'auto'
 
 const getOption = ({ config }) => ({
   title: {
@@ -86,10 +88,26 @@ class ConfigForm extends React.Component {
 
   render () {
     const { getFieldDecorator } = this.props.form
-    const { max_df, min_df, topic_keywords, max_iter } = this.props.preConfig
+    const { max_df, min_df, topic_keywords, max_iter, topic_amount } = this.props.preConfig
     const value = _.isEmpty(this.props.form.getFieldsValue()) ? this.props.preConfig : this.props.form.getFieldsValue()
     return (
       <Form onSubmit={this.handleSubmit}>
+        <FormItem
+          label={`主题数量 ${typeof value['topic_amount'] === 'number' ? value['topic_amount'] : '由困惑度自动选取'}`}
+        >
+          {getFieldDecorator('topic_amount', {
+            initialValue: topic_amount
+          })(
+            <Select>
+              <Option value={autoTopicAmount}>由困惑度自动选取</Option>
+              {
+                [3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                  <Option value={value}>{value}</Option>
+                ))
+              }
+            </Select>
+          )}
+        </FormItem>
         <FormItem
           label={`最大词频 ${value['max_df']}`}
         >
