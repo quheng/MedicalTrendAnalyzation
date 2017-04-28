@@ -15,18 +15,31 @@
 
 
 import os
-import tqdm
 import random
 import scipy.special
 import numpy as np
 import scipy.stats
 import pickle
 import jieba
+import time
+import datetime
 
 from copy import deepcopy
 from util import RAW_DATA_DIR
 from util import STOP_WORDS
+from tqdm import tqdm
 
+def __file2word_list(filename):
+    with open(filename, 'r', encoding='utf-8') as raw_data:
+        try:
+            word_list = []
+            for line in raw_data.readlines():
+                seg_list_stop_words = map(lambda word: word.strip(), jieba.cut(line, cut_all=False))
+                seg_list = filter(lambda word: word and word not in STOP_WORDS, seg_list_stop_words)
+                word_list.extend(seg_list)
+            return word_list
+        except Exception as exception:
+            print(f'Error during process {filename}, error message: {exception}')
 
 def get_documents_and_dictionary():
     documents = []
@@ -39,22 +52,13 @@ def get_documents_and_dictionary():
         for filename in pb_file_names:
             pb_file_names.set_description('Processing %s' % filename)
             full_file_name = os.path.join(parent, filename)
-            with open(full_file_name, 'r', encoding='utf-8') as raw_data:
-                try:
-                    word_list = {}
-                    for line in raw_data.readlines():
-                        seg_list_stop_words = map(lambda word:word.strip(), jieba.cut(line, cut_all=False))
-                        seg_list = filter(lambda word:word and word not in STOP_WORDS, seg_list_stop_words)
-                        for word in seg_list:
-                            if word in word_list:
-                                word_list[word] += 1
-                            else:
-                                word_list[word] = 1
-                    bag_of_word[filename] = word_list
-                    count += 1
-                except Exception as exception:
-                    err += 1
-                    print(f'Error during process {filename}, error message: {exception}')
+            word_list = __file2word_list(full_file_name)
+            documents.append(word_list)
+            for word in word_list:
+                dictionary.add(word)
+
+            time_string = filename.split(':')[0]
+            timestamps.append(time.mktime(datetime.datetime.strptime(time_string, "%Y-%m-%d").timetuple()))
 
     return documents, timestamps, dictionary
 
