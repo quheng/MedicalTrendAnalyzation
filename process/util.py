@@ -1,7 +1,7 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-RAW_DATA_DIR = os.path.join(BASE_DIR, 'test')
+RAW_DATA_DIR = os.path.join(BASE_DIR, 'raw_data')
 TOPIC_PATH = os.path.join(BASE_DIR, 'data/lda/topic.json')
 DOC_PATH = os.path.join(BASE_DIR, 'data/lda/doc.json')
 LDA_MODEL_PATH = os.path.join(BASE_DIR, 'data/lda/lda_model.pkl')

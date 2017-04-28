@@ -107,7 +107,7 @@ class TopicsOverTime:
         par['z'] = [[random.randrange(0, par['T']) for _ in range(par['N'][d])] for d in range(par['D'])]
         par['t'] = [[timestamps[d] for _ in range(par['N'][d])] for d in range(par['D'])]
         par['w'] = [[par['word_id'][documents[d][i]] for i in range(par['N'][d])] for d in range(par['D'])]
-        par['m'] = [[0 for t in range(par['T'])] for d in range(par['D'])]
+        par['m'] = np.empty([par['D'], par['T']])
         par['n'] = [[0 for v in range(par['V'])] for t in range(par['T'])]
         par['n_sum'] = [0 for t in range(par['T'])]
         np.set_printoptions(threshold=np.inf)
@@ -232,18 +232,12 @@ class TopicsOverTime:
 
 if __name__ == "__main__":
     resultspath = '../data/tot/'
-    tot_topic_vectors_path = resultspath + 'pnas_tot_topic_vectors.csv'
-    tot_topic_mixtures_path = resultspath + 'pnas_tot_topic_mixtures.csv'
-    tot_topic_shapes_path = resultspath + 'pnas_tot_topic_shapes.csv'
     tot_pickle_path = resultspath + 'pnas_tot.pickle'
 
     tot = TopicsOverTime()
     documents, timestamps, dictionary = get_documents_and_dictionary()
     par = tot.InitializeParameters(documents, timestamps, dictionary)
     theta, phi, psi = tot.TopicsOverTimeGibbsSampling(par)
-    np.savetxt(tot_topic_vectors_path, phi, delimiter=',')
-    np.savetxt(tot_topic_mixtures_path, theta, delimiter=',')
-    np.savetxt(tot_topic_shapes_path, psi, delimiter=',')
     tot_pickle = open(tot_pickle_path, 'wb')
     pickle.dump(par, tot_pickle)
     tot_pickle.close()
