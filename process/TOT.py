@@ -41,6 +41,13 @@ def __file2word_list(filename):
         except Exception as exception:
             print(f'Error during process {filename}, error message: {exception}')
 
+
+def __timestamps_normalizing(timestamps):
+    max_timestamps = max(timestamps)
+    min_timestamps = min(timestamps)
+    delta = max_timestamps - min_timestamps
+    return [(timestamp - min_timestamps) / delta for timestamp in timestamps]
+
 def get_documents_and_dictionary():
     documents = []
     timestamps = []
@@ -60,7 +67,7 @@ def get_documents_and_dictionary():
             time_string = filename.split(':')[0]
             timestamps.append(time.mktime(datetime.datetime.strptime(time_string, "%Y-%m-%d").timetuple()))
 
-    return documents, timestamps, list(dictionary)
+    return documents, __timestamps_normalizing(timestamps), list(dictionary)
 
 
 class TopicsOverTime:
