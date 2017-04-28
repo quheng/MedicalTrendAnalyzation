@@ -60,7 +60,7 @@ def get_documents_and_dictionary():
             time_string = filename.split(':')[0]
             timestamps.append(time.mktime(datetime.datetime.strptime(time_string, "%Y-%m-%d").timetuple()))
 
-    return documents, timestamps, dictionary
+    return documents, timestamps, list(dictionary)
 
 
 class TopicsOverTime:
@@ -223,11 +223,11 @@ if __name__ == "__main__":
 
     tot = TopicsOverTime()
     documents, timestamps, dictionary = get_documents_and_dictionary()
-    # par = tot.InitializeParameters(documents, timestamps, dictionary)
-    # theta, phi, psi = tot.TopicsOverTimeGibbsSampling(par)
-    # np.savetxt(tot_topic_vectors_path, phi, delimiter=',')
-    # np.savetxt(tot_topic_mixtures_path, theta, delimiter=',')
-    # np.savetxt(tot_topic_shapes_path, psi, delimiter=',')
-    # tot_pickle = open(tot_pickle_path, 'wb')
-    # pickle.dump(par, tot_pickle)
-    # tot_pickle.close()
+    par = tot.InitializeParameters(documents, timestamps, dictionary)
+    theta, phi, psi = tot.TopicsOverTimeGibbsSampling(par)
+    np.savetxt(tot_topic_vectors_path, phi, delimiter=',')
+    np.savetxt(tot_topic_mixtures_path, theta, delimiter=',')
+    np.savetxt(tot_topic_shapes_path, psi, delimiter=',')
+    tot_pickle = open(tot_pickle_path, 'wb')
+    pickle.dump(par, tot_pickle)
+    tot_pickle.close()
