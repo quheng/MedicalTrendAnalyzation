@@ -25,9 +25,18 @@ import time
 import datetime
 
 from copy import deepcopy
+from tqdm import tqdm
 from util import RAW_DATA_DIR
 from util import STOP_WORDS
-from tqdm import tqdm
+
+date_format = 'YYYY-MM'
+
+
+def __time_string2timestamp(time_string):
+    date = datetime.datetime.strptime(time_string, "%Y-%m-%d")
+    date.replace(day=1)
+    return time.mktime(date.timetuple())
+
 
 def __file2word_list(filename):
     with open(filename, 'r', encoding='utf-8') as raw_data:
@@ -65,7 +74,7 @@ def get_documents_and_dictionary():
                 dictionary.add(word)
 
             time_string = filename.split(':')[0]
-            timestamps.append(time.mktime(datetime.datetime.strptime(time_string, "%Y-%m-%d").timetuple()))
+            timestamps.append(__time_string2timestamp(time_string))
 
     return documents, __timestamps_normalizing(timestamps), list(dictionary)
 
@@ -213,7 +222,7 @@ class TopicsOverTime:
                     par['n'][new_topic][word_di] += 1
                     par['n_sum'][new_topic] += 1
 
-                if d % 1000 == 0:
+                if d % 100 == 0:
                     print('Done with iteration {iteration} and document {document}'.format(iteration=iteration,
                                                                                            document=d))
             par['psi'] = self.GetMethodOfMomentsEstimatesForPsi(par)
