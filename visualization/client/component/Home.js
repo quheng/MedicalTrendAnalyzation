@@ -6,6 +6,7 @@ import LdaRelativeTrend from './lda/RelativeTrend'
 import LdaTopic from './lda/Topic'
 import LdaAnalyze from './lda/Analyze'
 import LdaParamsConfig from './lda/ParamsConfig'
+import TotRelativeTrend from './tot/RelativeTread'
 
 import { Menu, Icon } from 'antd'
 import { autobind } from 'react-decoration'
@@ -18,7 +19,7 @@ const FUNC = {
   ldaTopic: 'ldaTopic',
   ldaAnalyze: 'ldaAnalyze',
   ldaParamsConfig: 'LdaParamsConfig',
-  todo: 'todo'
+  totRelativeTrend: 'totRelativeTrend'
 }
 
 class Sider extends React.Component {
@@ -42,7 +43,7 @@ class Sider extends React.Component {
           <Menu.Item key={FUNC.ldaAnalyze}>主题分析</Menu.Item>
         </SubMenu>
         <SubMenu key='tot' title={<span><Icon type='rocket' />TOT</span>}>
-          <Menu.Item key='tot-todo'>敬请期待</Menu.Item>
+          <Menu.Item key={FUNC.totRelativeTrend}>相对趋势</Menu.Item>
         </SubMenu>
       </Menu>
     )
@@ -72,6 +73,8 @@ class Home extends Component {
         return <LdaAnalyze />
       case FUNC.ldaParamsConfig:
         return <LdaParamsConfig />
+      case FUNC.totRelativeTrend:
+        return <TotRelativeTrend />
       default:
         return <div>敬请期待</div>
     }
