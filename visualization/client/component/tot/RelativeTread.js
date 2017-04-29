@@ -1,171 +1,105 @@
 import React from 'react'
 import echarts from 'echarts'
 import _ from 'lodash'
-import fetch from 'isomorphic-fetch'
-import moment from 'moment'
-
 import styles from './Main.css'
 import Loading from '../Loading'
 
 import { autobind } from 'react-decoration'
-import { Popover, Checkbox } from 'antd'
-import { checkStatus, serverAddress } from '../../util'
 
 const refName = 'RelativeTrend'
 
-const rawDateFormat = 'YYYY-MM-DD'
-const dateFormat = 'YYYY-MM'
-
-const CheckboxGroup = Checkbox.Group
-const lineTypeList = {'月线': 1, 'MA3': 3, 'MA5': 5}
-
-const getMaCalculator = (values, dayCount) => {
-  const result = []
-  for (let i = 0, len = values.length; i < len; i++) {
-    if (i < dayCount) {
-      result.push('-')
-      continue
-    }
-    let sum = 0
-    for (let j = 0; j < dayCount; j++) {
-      sum += values[i - j]
-    }
-    result.push(sum / dayCount)
-  }
-  return result
-}
-
-const getSeries = ({ categoryData, topicValues, checkedTopics, checkedLineTypes }) => (
-  _.flatMap(Array.from(checkedTopics), topic => (
-    checkedLineTypes.map(lineType => ({
-      name: `${topic}-${lineType}`,
+const getOption = () => ({
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
       type: 'line',
-      data: getMaCalculator(topicValues[topic], lineTypeList[lineType]),
-      smooth: true,
       lineStyle: {
-        normal: {opacity: 0.5}
+        color: 'rgba(0,0,0,0.2)',
+        width: 1,
+        type: 'solid'
       }
-    }))
-  ))
-)
-
-const getOption = (categoryData) => {
-  return {
-    title: {
-      text: '相对趋势',
-      left: 100
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'cross'
-      }
-    },
-    grid: {
-      left: '10%',
-      right: '10%',
-      bottom: '15%'
-    },
-    xAxis: {
-      type: 'category',
-      data: categoryData,
-      scale: true,
-      boundaryGap: false,
-      axisLine: {onZero: false},
-      splitLine: {show: false},
-      splitNumber: 20,
-      min: 'dataMin',
-      max: 'dataMax'
-    },
-    yAxis: {
-      scale: true,
-      splitArea: {
+    }
+  },
+  legend: {
+    data: ['DQ', 'TY', 'SS', 'QG', 'SY', 'DD']
+  },
+  singleAxis: {
+    top: 50,
+    bottom: 50,
+    axisTick: {},
+    axisLabel: {},
+    type: 'time',
+    axisPointer: {
+      animation: true,
+      label: {
         show: true
       }
     },
-    dataZoom: [
-      {
-        type: 'inside',
-        start: 50,
-        end: 100
-      },
-      {
-        show: true,
-        type: 'slider',
-        y: '90%',
-        start: 50,
-        end: 100
+    splitLine: {
+      show: true,
+      lineStyle: {
+        type: 'dashed',
+        opacity: 0.2
       }
-    ]
-  }
-}
-
-const topicName = (index) => (`主题${index + 1}`)
-
-const transformData = (rawData) => {
-  const totalTrend = {}
-  const topicTrend = []
-
-  rawData.forEach(data => {
-    const date = moment(data.date, rawDateFormat).format(dateFormat)
-    totalTrend[date] = _.get(totalTrend, date, 0) + 1
-    const lda = data.lda
-    const topic = lda.indexOf(Math.max(...lda))
-    if (_.isEmpty(topicTrend[topic])) {
-      topicTrend[topic] = {}
-      topicTrend[topic][date] = 1
-    } else {
-      topicTrend[topic][date] = _.get(topicTrend[topic], date, 0) + 1
     }
-  })
-
-  const categoryData = []
-  const topicsName = topicTrend.map((topic, index) => (topicName(index)))
-  const topicValues = {}
-  topicsName.forEach(topicName => { topicValues[topicName] = [] })
-
-  _.forIn(totalTrend, (totalAmount, date) => {
-    categoryData.push(date)
-    topicTrend.forEach((topic, index) => {
-      topicValues[topicName(index)].push(_.get(topic, date, 0) / totalAmount)
-    })
-  })
-  return {categoryData, topicValues, topicsName}
-}
+  },
+  series: [
+    {
+      type: 'themeRiver',
+      itemStyle: {
+        emphasis: {
+          shadowBlur: 20,
+          shadowColor: 'rgba(0, 0, 0, 0.8)'
+        }
+      },
+      data: [['2015/11/08', 10, 'DQ'], ['2015/11/09', 15, 'DQ'], ['2015/11/10', 35, 'DQ'],
+        // ['2015/11/11',38,'DQ'],['2015/11/12',22,'DQ'],['2015/11/13',16,'DQ'],
+        ['2015/11/14', 7, 'DQ'], ['2015/11/15', 2, 'DQ'], ['2015/11/16', 17, 'DQ'],
+        ['2015/11/17', 33, 'DQ'], ['2015/11/18', 40, 'DQ'], ['2015/11/19', 32, 'DQ'],
+        ['2015/11/20', 26, 'DQ'], ['2015/11/21', 35, 'DQ'], ['2015/11/22', 40, 'DQ'],
+        ['2015/11/23', 32, 'DQ'], ['2015/11/24', 26, 'DQ'], ['2015/11/25', 22, 'DQ'],
+        // ['2015/11/26',16,'DQ'],['2015/11/27',22,'DQ'],['2015/11/28',10,'DQ'],
+        ['2015/11/08', 35, 'TY'], ['2015/11/09', 36, 'TY'], ['2015/11/10', 37, 'TY'],
+        ['2015/11/11', 22, 'TY'], ['2015/11/12', 24, 'TY'], ['2015/11/13', 26, 'TY'],
+        ['2015/11/14', 34, 'TY'], ['2015/11/15', 21, 'TY'], ['2015/11/16', 18, 'TY'],
+        ['2015/11/17', 45, 'TY'], ['2015/11/18', 32, 'TY'], ['2015/11/19', 35, 'TY'],
+        ['2015/11/20', 30, 'TY'], ['2015/11/21', 28, 'TY'], ['2015/11/22', 27, 'TY'],
+        ['2015/11/23', 26, 'TY'], ['2015/11/24', 15, 'TY'], ['2015/11/25', 30, 'TY'],
+        ['2015/11/26', 35, 'TY'], ['2015/11/27', 42, 'TY'], ['2015/11/28', 42, 'TY'],
+        ['2015/11/08', 21, 'SS'], ['2015/11/09', 25, 'SS'], ['2015/11/10', 27, 'SS'],
+        ['2015/11/11', 23, 'SS'], ['2015/11/12', 24, 'SS'], ['2015/11/13', 21, 'SS'],
+        ['2015/11/14', 35, 'SS'], ['2015/11/15', 39, 'SS'], ['2015/11/16', 40, 'SS'],
+        ['2015/11/17', 36, 'SS'], ['2015/11/18', 33, 'SS'], ['2015/11/19', 43, 'SS'],
+        ['2015/11/20', 40, 'SS'], ['2015/11/21', 34, 'SS'], ['2015/11/22', 28, 'SS'],
+        // ['2015/11/23',26,'SS'],['2015/11/24',37,'SS'],['2015/11/25',41,'SS'],
+        // ['2015/11/26',46,'SS'],['2015/11/27',47,'SS'],['2015/11/28',41,'SS'],
+        // ['2015/11/08',10,'QG'],['2015/11/09',15,'QG'],['2015/11/10',35,'QG'],
+        // ['2015/11/11',38,'QG'],['2015/11/12',22,'QG'],['2015/11/13',16,'QG'],
+        ['2015/11/14', 7, 'QG'], ['2015/11/15', 2, 'QG'], ['2015/11/16', 17, 'QG'],
+        ['2015/11/17', 33, 'QG'], ['2015/11/18', 40, 'QG'], ['2015/11/19', 32, 'QG'],
+        ['2015/11/20', 26, 'QG'], ['2015/11/21', 35, 'QG'], ['2015/11/22', 40, 'QG'],
+        ['2015/11/23', 32, 'QG'], ['2015/11/24', 26, 'QG'], ['2015/11/25', 22, 'QG'],
+        ['2015/11/26', 16, 'QG'], ['2015/11/27', 22, 'QG'], ['2015/11/28', 10, 'QG'],
+        ['2015/11/08', 10, 'SY'], ['2015/11/09', 15, 'SY'], ['2015/11/10', 35, 'SY'],
+        ['2015/11/11', 38, 'SY'], ['2015/11/12', 22, 'SY'], ['2015/11/13', 16, 'SY'],
+        ['2015/11/14', 7, 'SY'], ['2015/11/15', 2, 'SY'], ['2015/11/16', 17, 'SY'],
+        ['2015/11/17', 33, 'SY'], ['2015/11/18', 40, 'SY'], ['2015/11/19', 32, 'SY'],
+        ['2015/11/20', 26, 'SY'], ['2015/11/21', 35, 'SY'], ['2015/11/22', 4, 'SY'],
+        ['2015/11/23', 32, 'SY'], ['2015/11/24', 26, 'SY'], ['2015/11/25', 22, 'SY'],
+        ['2015/11/26', 16, 'SY'], ['2015/11/27', 22, 'SY'], ['2015/11/28', 10, 'SY'],
+        ['2015/11/08', 10, 'DD'], ['2015/11/09', 15, 'DD'], ['2015/11/10', 35, 'DD'],
+        ['2015/11/11', 38, 'DD'], ['2015/11/12', 22, 'DD'], ['2015/11/13', 16, 'DD'],
+        ['2015/11/14', 7, 'DD'], ['2015/11/15', 2, 'DD'], ['2015/11/16', 17, 'DD'],
+        ['2015/11/17', 33, 'DD'], ['2015/11/18', 4, 'DD'], ['2015/11/19', 32, 'DD'],
+        ['2015/11/20', 26, 'DD'], ['2015/11/21', 35, 'DD'], ['2015/11/22', 40, 'DD'],
+        ['2015/11/23', 32, 'DD'], ['2015/11/24', 26, 'DD'], ['2015/11/25', 22, 'DD'],
+        ['2015/11/26', 16, 'DD'], ['2015/11/27', 22, 'DD'], ['2015/11/28', 10, 'DD']]
+    }]})
 
 export default class RelativeTrend extends React.Component {
   constructor () {
     super()
-    this.state = {
-      topicKeyWords: [],
-      categoryData: [],
-      topicValues: [],
-      checkedTopics: new Set(),
-      checkedLineTypes: [_.keys(lineTypeList)[0]],
-      topicsName: [],
-      lineTypeListIndeterminate: true,
-      lineTypeListCheckAll: false,
-      topicIndeterminate: true,
-      topicCheckAll: false
-    }
-    fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
-      .then(checkStatus)
-      .then((res) => (res.json()))
-      .then((topicKeyWords) => this.setState({...this.state, topicKeyWords}))
-
-    fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
-      .then(checkStatus)
-      .then((res) => (res.json()))
-      .then((doc) => {
-        const data = transformData(doc)
-        this.setState({
-          ...this.state,
-          checkedTopics: new Set([data.topicsName[0]]),
-          categoryData: data.categoryData,
-          topicValues: data.topicValues,
-          topicsName: data.topicsName
-        })
-      })
+    this.state = {}
   }
 
   @autobind
@@ -179,115 +113,9 @@ export default class RelativeTrend extends React.Component {
 
   componentDidUpdate () {
     if (this.isDataLoaded()) {
-      let option = this.myChart.getOption() || getOption(this.state.categoryData)
-      option.series = getSeries(this.state)
-      // 这里不能直接 this.myChart.setOption(series), 那样会无法去掉数据
-      this.myChart.setOption(option, true)
+      const option = getOption()
+      this.myChart.setOption(option)
     }
-  }
-
-  @autobind
-  onTopicChange (value) {
-    return (e) => {
-      const plainOptions = this.state.topicsName
-      const checkedTopics = this.state.checkedTopics
-      if (e.target.checked) {
-        checkedTopics.add(value)
-      } else {
-        checkedTopics.delete(value)
-      }
-      this.setState({
-        ...this.state,
-        checkedTopics,
-        topicIndeterminate: !!checkedTopics.size && (checkedTopics.size < plainOptions.length),
-        topicCheckAll: checkedTopics.size === plainOptions.length
-      })
-    }
-  }
-
-  @autobind
-  onTopicCheckAllChange (e) {
-    this.setState({
-      ...this.state,
-      checkedTopics: e.target.checked ? new Set(this.state.topicsName) : new Set(),
-      topicIndeterminate: false,
-      topicCheckAll: e.target.checked
-    })
-  }
-
-  @autobind
-  onLineTypeChange (checkedLineTypes) {
-    const plainOptions = _.keys(lineTypeList)
-    this.setState({
-      ...this.state,
-      checkedLineTypes,
-      lineTypeListIndeterminate: !!lineTypeList && (checkedLineTypes.length < plainOptions.length),
-      lineTypeListCheckAll: checkedLineTypes.length === plainOptions.length
-    })
-  }
-
-  @autobind
-  onLineTypeCheckAllChange (e) {
-    this.setState({
-      ...this.state,
-      checkedLineTypes: e.target.checked ? _.keys(lineTypeList) : [],
-      lineTypeListIndeterminate: false,
-      lineTypeListCheckAll: e.target.checked
-    })
-  }
-
-  @autobind
-  getTopicKeyWords (index) {
-    return <div style={{display: 'flex', flexWrap: 'wrap', width: '100'}}>
-      {
-        _.get(this.state.topicKeyWords, index, []).map(keyWord => (
-          <div style={{margin: '5'}}>{keyWord}</div>
-        ))
-      }
-    </div>
-  }
-
-  @autobind
-  drawCheckbox () {
-    return <div className={styles.relativeTrendCheckedBox}>
-      <div style={{width: 222, maLeft: 10}}>
-        <div>
-          <Checkbox
-            topicIndeterminate={this.state.topicIndeterminate}
-            onChange={this.onTopicCheckAllChange}
-            checked={this.state.topicCheckAll}
-          >
-            全选主题
-          </Checkbox>
-        </div>
-        <br />
-        {
-          this.state.topicsName.map((topicName, index) => (
-            <Popover content={this.getTopicKeyWords(index)} title={topicName}>
-              <Checkbox
-                checked={this.state.checkedTopics.has(topicName)}
-                onChange={this.onTopicChange(topicName)}>
-                {topicName}
-              </Checkbox>
-            </Popover>
-          ))
-        }
-      </div>
-
-      <div style={{width: 222}}>
-        <div>
-          <Checkbox
-            topicIndeterminate={this.state.topicIndeterminate}
-            onChange={this.onLineTypeCheckAllChange}
-            checked={this.state.lineTypeListCheckAll}
-          >
-            全选类型
-          </Checkbox>
-        </div>
-        <br />
-        <CheckboxGroup options={_.keys(lineTypeList)} value={this.state.checkedLineTypes} onChange={this.onLineTypeChange} />
-      </div>
-    </div>
   }
 
   render () {
@@ -298,7 +126,7 @@ export default class RelativeTrend extends React.Component {
         ref={refName}
       />
       {this.isDataLoaded()
-        ? this.drawCheckbox()
+        ? <div />
         : <Loading />}
     </div>
   }
