@@ -59,7 +59,21 @@ const getOption = ({ topic, topicAmountList }) => ({
           topicAmountList.date[dateIndex],
           topicAmount,
           topic[index]
-        ]))))}]})
+        ])))
+      )
+    }
+  ]
+})
+
+const transformData = (topicAbsAmountList) => {
+  const totalAmount = _.zip(...topicAbsAmountList.data).map(_.sum)
+  return {
+    data: topicAbsAmountList.data.map(topicAbsAmount => (
+      topicAbsAmount.map((amount, index) => amount / totalAmount[index])
+    )),
+    date: topicAbsAmountList.date
+  }
+}
 
 export default class RelativeTrend extends React.Component {
   constructor () {
@@ -74,7 +88,10 @@ export default class RelativeTrend extends React.Component {
     fetch(`${apiAddress}/tot-topic-amount`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
-      .then((topicAmountList) => this.setState({...this.state, topicAmountList}))
+      .then((topicAbsAmountList) => this.setState({
+        ...this.state,
+        topicAmountList: transformData(topicAbsAmountList)
+      }))
   }
 
   @autobind
@@ -84,8 +101,6 @@ export default class RelativeTrend extends React.Component {
 
   componentDidMount () {
     this.myChart = echarts.init(this.refs[refName])
-    const option = getOption(this.state)
-    this.myChart.setOption(option)
   }
 
   componentDidUpdate () {
