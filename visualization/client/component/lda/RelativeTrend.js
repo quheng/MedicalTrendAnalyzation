@@ -9,7 +9,7 @@ import Loading from '../Loading'
 
 import { autobind } from 'react-decoration'
 import { Popover, Checkbox } from 'antd'
-import { checkStatus, serverAddress } from '../../util'
+import { checkStatus, apiAddress } from '../../util'
 
 const refName = 'RelativeTrend'
 
@@ -148,12 +148,12 @@ export default class RelativeTrend extends React.Component {
       topicIndeterminate: true,
       topicCheckAll: false
     }
-    fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
+    fetch(`${apiAddress}/lda-topic`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
       .then((topicKeyWords) => this.setState({...this.state, topicKeyWords}))
 
-    fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
+    fetch(`${apiAddress}/lda-doc`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
       .then((doc) => {

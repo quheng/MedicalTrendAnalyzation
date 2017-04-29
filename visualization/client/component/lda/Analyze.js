@@ -6,7 +6,7 @@ import styles from './Main.css'
 import DynamicFieldSet from './DynamicFieldSet'
 
 import { autobind } from 'react-decoration'
-import { checkStatus, serverAddress } from '../../util'
+import { checkStatus, apiAddress } from '../../util'
 
 const refName = 'Analyze'
 
@@ -48,7 +48,7 @@ export default class Analyze extends React.Component {
       topicList: [],
       results: []
     }
-    fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
+    fetch(`${apiAddress}/lda-topic`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
       .then((topicList) => this.setState({...this.state, topicList: transformData(topicList)}))
@@ -79,7 +79,7 @@ export default class Analyze extends React.Component {
       maskColor: 'rgba(255, 255, 255, 0.8)',
       zlevel: 0
     })
-    fetch(`${serverAddress}/lda-predict`, {
+    fetch(`${apiAddress}/lda-predict`, {
       method: 'POST',
       body: JSON.stringify(articleList),
       headers: {

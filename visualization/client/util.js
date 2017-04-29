@@ -1,6 +1,6 @@
 import { message } from 'antd'
 
-export const serverAddress = 'http://0.0.0.0:2333/api'
+export const apiAddress = '/api'
 
 export function checkStatus (response) {
   if (response.status >= 200 && response.status < 300) {

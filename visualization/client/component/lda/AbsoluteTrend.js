@@ -7,7 +7,7 @@ import moment from 'moment'
 import styles from './Main.css'
 
 import { autobind } from 'react-decoration'
-import { checkStatus, serverAddress } from '../../util'
+import { checkStatus, apiAddress } from '../../util'
 
 const refName = 'AbsoluteTrend'
 
@@ -106,12 +106,12 @@ export default class AbsoluteTrend extends React.Component {
       categoryData: [],
       topicsName: []
     }
-    fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
+    fetch(`${apiAddress}/lda-topic`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
       .then((topicKeywords) => this.setState({...this.state, topicKeywords}))
 
-    fetch(`${serverAddress}/lda-doc`, { method: 'GET' })
+    fetch(`${apiAddress}/lda-doc`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
       .then((doc) => {
@@ -134,6 +134,7 @@ export default class AbsoluteTrend extends React.Component {
 
   componentDidUpdate () {
     const option = getOption(this.state)
+    console.log(JSON.stringify(this.state.categoryData))
     this.myChart.setOption(option)
   }
 

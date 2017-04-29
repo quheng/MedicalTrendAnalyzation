@@ -6,7 +6,7 @@ import Loading from './Loading'
 import Dimensions from 'react-dimensions'
 
 import { autobind } from 'react-decoration'
-import { checkStatus, serverAddress } from '../util'
+import { checkStatus, apiAddress } from '../util'
 
 const limit = 1000
 
@@ -17,7 +17,7 @@ class WordsCloud extends Component {
       words: [],
       limit
     }
-    fetch(`${serverAddress}/words-relationship/${limit}`, { method: 'GET' })
+    fetch(`${apiAddress}/words-relationship/${limit}`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
       .then((data) => this.setState({words: data}))

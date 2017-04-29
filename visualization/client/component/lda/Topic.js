@@ -6,7 +6,7 @@ import fetch from 'isomorphic-fetch'
 import styles from './Main.css'
 
 import { autobind } from 'react-decoration'
-import { checkStatus, serverAddress } from '../../util'
+import { checkStatus, apiAddress } from '../../util'
 
 const refName = 'AbsoluteTrend'
 
@@ -86,7 +86,7 @@ export default class Topic extends React.Component {
     this.state = {
       topic: []
     }
-    fetch(`${serverAddress}/lda-topic`, { method: 'GET' })
+    fetch(`${apiAddress}/lda-topic`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
       .then((topic) => this.setState({...this.state, ...transformData(topic)}))

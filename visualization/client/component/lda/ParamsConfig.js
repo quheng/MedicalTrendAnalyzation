@@ -6,7 +6,7 @@ import styles from './Main.css'
 
 import { autobind } from 'react-decoration'
 import { Modal, Form, Button, Slider, Spin, message, Progress, Select } from 'antd'
-import { checkStatus, serverAddress } from '../../util'
+import { checkStatus, apiAddress } from '../../util'
 
 const refName = 'ParamsConfig'
 const FormItem = Form.Item
@@ -182,7 +182,7 @@ export default class AbsoluteTrend extends React.Component {
       showModal: false,
       percent: 0
     }
-    fetch(`${serverAddress}/lda-config`, { method: 'GET' })
+    fetch(`${apiAddress}/lda-config`, { method: 'GET' })
       .then(checkStatus)
       .then((res) => (res.json()))
       .then((rawData) => this.setState({...this.state, config: transformData(rawData)}))
@@ -213,7 +213,7 @@ export default class AbsoluteTrend extends React.Component {
   @autobind
   submitParams (value) {
     value['is_saving'] = true
-    fetch(`${serverAddress}/lda-config`, {
+    fetch(`${apiAddress}/lda-config`, {
       method: 'POST',
       body: JSON.stringify(value),
       headers: {
