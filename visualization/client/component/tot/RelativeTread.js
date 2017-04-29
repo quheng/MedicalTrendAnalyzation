@@ -109,13 +109,11 @@ export default class RelativeTrend extends React.Component {
 
   componentDidMount () {
     this.myChart = echarts.init(this.refs[refName])
+    const option = getOption()
+    this.myChart.setOption(option)
   }
 
   componentDidUpdate () {
-    if (this.isDataLoaded()) {
-      const option = getOption()
-      this.myChart.setOption(option)
-    }
   }
 
   render () {
