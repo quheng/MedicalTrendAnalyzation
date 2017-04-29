@@ -92,24 +92,24 @@ class TopicsOverTime:
 
     def InitializeParameters(self, documents, timestamps, dictionary):
         par = {}  # dictionary of all parameters
-        par['max_iterations'] = 40  # max number of iterations in gibbs sampling
-        par['T'] = 8  # number of topics
+        par['max_iterations'] = 10  # max number of iterations in gibbs sampling
+        par['theta'] = 2  # number of topics
         par['D'] = len(documents)  # number of documents
         par['V'] = len(dictionary)  # number of unique words
         par['N'] = [len(doc) for doc in documents]  # number of word tokens in document d
-        par['alpha'] = [50.0 / par['T'] for _ in range(par['T'])]
+        par['alpha'] = [50.0 / par['theta'] for _ in range(par['theta'])]
         par['beta'] = [0.1 for _ in range(par['V'])]
         par['beta_sum'] = sum(par['beta'])
-        par['psi'] = [[1 for _ in range(2)] for _ in range(par['T'])]
-        par['betafunc_psi'] = [scipy.special.beta(par['psi'][t][0], par['psi'][t][1]) for t in range(par['T'])]
+        par['psi'] = [[1 for _ in range(2)] for _ in range(par['theta'])]
+        par['betafunc_psi'] = [scipy.special.beta(par['psi'][t][0], par['psi'][t][1]) for t in range(par['theta'])]
         par['word_id'] = {dictionary[i]: i for i in range(len(dictionary))}
         par['word_token'] = dictionary
-        par['z'] = [[random.randrange(0, par['T']) for _ in range(par['N'][d])] for d in range(par['D'])]
-        par['t'] = [[timestamps[d] for _ in range(par['N'][d])] for d in range(par['D'])]
+        par['z'] = [[random.randrange(0, par['theta']) for _ in range(par['N'][d])] for d in range(par['D'])]
+        par['theta'] = [[timestamps[d] for _ in range(par['N'][d])] for d in range(par['D'])]
         par['w'] = [[par['word_id'][documents[d][i]] for i in range(par['N'][d])] for d in range(par['D'])]
-        par['m'] = [[0 for t in range(par['T'])] for d in range(par['D'])]
-        par['n'] = [[0 for v in range(par['V'])] for t in range(par['T'])]
-        par['n_sum'] = [0 for t in range(par['T'])]
+        par['m'] = [[0 for t in range(par['theta'])] for d in range(par['D'])]
+        par['n'] = [[0 for v in range(par['V'])] for t in range(par['theta'])]
+        par['n_sum'] = [0 for t in range(par['theta'])]
         np.set_printoptions(threshold=np.inf)
         np.seterr(divide='ignore', invalid='ignore')
         self.CalculateCounts(par)
@@ -117,9 +117,9 @@ class TopicsOverTime:
 
     def GetTopicTimestamps(self, par):
         topic_timestamps = []
-        for topic in range(par['T']):
+        for topic in range(par['theta']):
             current_topic_timestamps = []
-            current_topic_doc_timestamps = [[(par['z'][d][i] == topic) * par['t'][d][i] for i in range(par['N'][d])] for
+            current_topic_doc_timestamps = [[(par['z'][d][i] == topic) * par['theta'][d][i] for i in range(par['N'][d])] for
                                             d in range(par['D'])]
             for d in range(par['D']):
                 current_topic_doc_timestamps[d] = filter(lambda x: x != 0, current_topic_doc_timestamps[d])
@@ -155,7 +155,7 @@ class TopicsOverTime:
                 theta[d] = 1.0 * theta[d] / sum(theta[d])
         theta = np.asarray(theta)
 
-        for t in range(par['T']):
+        for t in range(par['theta']):
             if sum(phi[t]) == 0:
                 phi[t] = np.asarray([1.0 / len(phi[t]) for _ in range(len(phi[t]))])
             else:
@@ -171,7 +171,7 @@ class TopicsOverTime:
             for d in range(par['D']):
                 for i in range(par['N'][d]):
                     word_di = par['w'][d][i]
-                    t_di = par['t'][d][i]
+                    t_di = par['theta'][d][i]
 
                     old_topic = par['z'][d][i]
                     par['m'][d][old_topic] -= 1
@@ -179,7 +179,7 @@ class TopicsOverTime:
                     par['n_sum'][old_topic] -= 1
 
                     topic_probabilities = []
-                    for topic_di in range(par['T']):
+                    for topic_di in range(par['theta']):
                         psi_di = par['psi'][topic_di]
                         if psi_di[0] == 1 or psi_di[1] == 1:
                             topic_probabilities.append(1)
@@ -192,7 +192,7 @@ class TopicsOverTime:
 
                     sum_topic_probabilities = sum(topic_probabilities)
                     if sum_topic_probabilities == 0:
-                        topic_probabilities = [1.0 / par['T'] for _ in range(par['T'])]
+                        topic_probabilities = [1.0 / par['theta'] for _ in range(par['theta'])]
                     else:
                         topic_probabilities = [p / sum_topic_probabilities for p in topic_probabilities]
                     new_topic = list(np.random.multinomial(1, topic_probabilities, size=1)[0]).index(1)
@@ -205,7 +205,7 @@ class TopicsOverTime:
                     print('Done with iteration {iteration} and document {document}'.format(iteration=iteration,
                                                                                            document=d))
             par['psi'] = self.GetMethodOfMomentsEstimatesForPsi(par)
-            par['betafunc_psi'] = [scipy.special.beta(par['psi'][t][0], par['psi'][t][1]) for t in range(par['T'])]
+            par['betafunc_psi'] = [scipy.special.beta(par['psi'][t][0], par['psi'][t][1]) for t in range(par['theta'])]
         par['m'], par['n'] = self.ComputePosteriorEstimatesOfThetaAndPhi(par)
         return par['m'], par['n'], par['psi']
 
