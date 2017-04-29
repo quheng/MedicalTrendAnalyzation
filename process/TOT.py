@@ -19,8 +19,8 @@ import random
 import scipy.special
 import numpy as np
 import scipy.stats
-import pickle
 import jieba
+import json
 import time
 import datetime
 
@@ -93,7 +93,7 @@ def calculate_counts(par):
 
 def initialize_parameters(documents, timestamps, dictionary):
     par = {}
-    par['max_iterations'] = 3  # max number of iterations in gibbs sampling
+    par['max_iterations'] = 1000  # max number of iterations in gibbs sampling
     par['T'] = 10  # number of topics
     par['D'] = len(documents)  # number of documents
     par['V'] = len(dictionary)  # number of unique words
@@ -214,5 +214,5 @@ if __name__ == "__main__":
     par = initialize_parameters(documents, timestamps, dictionary)
     theta, phi, psi = gibbs_sampling(par)
     tot_pickle = open(TOT_MODEL_PATH, 'wb')
-    pickle.dump(par, tot_pickle)
+    json.dump(par, tot_pickle)
     tot_pickle.close()
