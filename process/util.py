@@ -4,6 +4,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 RAW_DATA_DIR = os.path.join(BASE_DIR, 'test')
 TOPIC_PATH = os.path.join(BASE_DIR, 'data/lda/topic.json')
 DOC_PATH = os.path.join(BASE_DIR, 'data/lda/doc.json')
+TOT_MODEL_PATH = os.path.join(BASE_DIR, 'data/tot/model.json')
+
 LDA_MODEL_PATH = os.path.join(BASE_DIR, 'data/lda/lda_model.pkl')
 VEC_MODEL_PATH = os.path.join(BASE_DIR, 'data/lda/vec_model.pkl')
 BAG_OF_WORDS_PATH = os.path.join(BASE_DIR, 'data/bag_of_words.json')
