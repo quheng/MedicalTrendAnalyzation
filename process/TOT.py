@@ -93,11 +93,11 @@ def calculate_counts(par):
 
 def initialize_parameters(documents, timestamps, dictionary):
     par = {}
-    par['max_iterations'] = 1000  # max number of iterations in gibbs sampling
-    par['T'] = 10  # number of topics
-    par['D'] = len(documents)  # number of documents
-    par['V'] = len(dictionary)  # number of unique words
-    par['N'] = [len(doc) for doc in documents]  # number of word tokens in document d
+    par['max_iterations'] = 1000
+    par['T'] = 10
+    par['D'] = len(documents)
+    par['V'] = len(dictionary)
+    par['N'] = [len(doc) for doc in documents]
     par['alpha'] = [50.0 / par['T'] for _ in range(par['T'])]
     par['beta'] = [0.1 for _ in range(par['V'])]
     par['beta_sum'] = sum(par['beta'])
