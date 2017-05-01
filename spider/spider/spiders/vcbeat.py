@@ -1,6 +1,7 @@
 import scrapy
 import requests
 import json
+import time 
 
 class VcbeatSpider(scrapy.Spider):
     name = "vcbeat"
@@ -9,16 +10,18 @@ class VcbeatSpider(scrapy.Spider):
         article_list_url = 'http://www.vcbeat.net/Index/Index/ajaxGetArticleList'
         article_url = 'http://www.vcbeat.net'
         categoryId = '2999'
-        page = 1
+        page = 3
         while True:
             res = requests.post(article_list_url, 
                 data = {'categoryId':categoryId, 'page':page})
+            print('page: ', page)
+            while res.status_code == 404:
+                print('@@@@@ retry')
+                time.sleep(3)
+                res = requests.post(article_list_url, 
+                    data = {'categoryId':categoryId, 'page':page})
             content = json.loads(res.content.decode('utf-8-sig'))
-            print("!!!!!!!")
-            if 'data' not in content:
-                print(content)
-                print('!!!!!')
-                print(page)
+            if content['status'] != 1:
                 break
             data = content['data']
             for item in data:
@@ -32,6 +35,8 @@ class VcbeatSpider(scrapy.Spider):
         def lam(response):
             content = response.xpath('//div[@class="row"]/div[@id="article-detail"]/div[@id="article-content"]/p/span/text()').extract()
             content.extend(response.xpath('//div[@class="row"]/div[@id="article-detail"]/div[@id="article-content"]/p/text()').extract())
+            content.extend(response.xpath('//div[@class="row"]/div[@id="article-detail"]/div[@id="article-content"]/sector/p/text()').extract())
+            content.extend(response.xpath('//div[@class="row"]/div[@id="article-detail"]/div[@id="article-content"]/section/p/text()').extract())
             cntx = ''.join(content)
             filename = f'{date}:{title}.txt'
             with open(f'vcbeat/{filename}', 'w') as f:
