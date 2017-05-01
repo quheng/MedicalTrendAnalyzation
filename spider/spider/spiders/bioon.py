@@ -6,7 +6,7 @@ class BioonSpider(scrapy.Spider):
     name = "bioon"
     start_urls = ['http://news.bioon.com/mobileMedical/research-%d.html'%x for x in range(1,51)]
     start_urls.extend(['http://news.bioon.com/mobileMedical/company-%d.html'%x for x in range(1,39)])
-    start_urls.extend(['http://news.bioon.com/mobileMedical/products-%d.html'%x for x in range(1,34)])
+    start_urls.extend(['http://news.bioon.com/mobileMedical/products-%d.html'%x for x in range(1,35)])
     start_urls.extend(['http://news.bioon.com/mobileMedical/industry-%d.html'%x for x in range(1,51)])
 
     def parse(self, response):
