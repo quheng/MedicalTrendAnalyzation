@@ -7,14 +7,18 @@ class VcbeatSpider(scrapy.Spider):
 
     def start_requests(self):
         article_list_url = 'http://www.vcbeat.net/Index/Index/ajaxGetArticleList'
-        article_url = 'http://www.vcbeat.net/Index/Index/ajaxGetArticleList'
+        article_url = 'http://www.vcbeat.net'
         categoryId = '2999'
         page = 1
         while True:
             res = requests.post(article_list_url, 
                 data = {'categoryId':categoryId, 'page':page})
             content = json.loads(res.content.decode('utf-8-sig'))
+            print("!!!!!!!")
             if 'data' not in content:
+                print(content)
+                print('!!!!!')
+                print(page)
                 break
             data = content['data']
             for item in data:
@@ -27,6 +31,7 @@ class VcbeatSpider(scrapy.Spider):
     def parse(self, date, title):
         def lam(response):
             content = response.xpath('//div[@class="row"]/div[@id="article-detail"]/div[@id="article-content"]/p/span/text()').extract()
+            content.extend(response.xpath('//div[@class="row"]/div[@id="article-detail"]/div[@id="article-content"]/p/text()').extract())
             cntx = ''.join(content)
             filename = f'{date}:{title}.txt'
             with open(f'vcbeat/{filename}', 'w') as f:
