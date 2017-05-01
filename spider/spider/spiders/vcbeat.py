@@ -9,8 +9,8 @@ class VcbeatSpider(scrapy.Spider):
         article_list_url = 'http://www.vcbeat.net/Index/Index/ajaxGetArticleList'
         article_url = 'http://www.vcbeat.net/Index/Index/ajaxGetArticleList'
         categoryId = '2999'
+        page = 1
         while True:
-            page = 1
             res = requests.post(article_list_url, 
                 data = {'categoryId':categoryId, 'page':page})
             content = json.loads(res.content.decode('utf-8-sig'))
@@ -20,6 +20,7 @@ class VcbeatSpider(scrapy.Spider):
             for item in data:
                 yield scrapy.Request(url=f'''{article_url}/{item['id']}''', 
                     callback=self.parse(item['publish_time'], item['title']))
+            page += 1
 
 
 
