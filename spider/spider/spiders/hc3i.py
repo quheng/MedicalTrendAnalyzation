@@ -17,6 +17,6 @@ class Hc3iSpider(scrapy.Spider):
         content = response.css('div.answer p::text').extract()
         cntx = ''.join(content)
         filename = f'{date}:{title}.txt'
-        with open(f'iyiou/{filename}', 'w') as f:
+        with open(f'{self.name}/{filename}', 'w') as f:
             f.write(cntx)
         self.log('Saved file %s' % filename)
