@@ -13,7 +13,7 @@ class Hc3iSpider(scrapy.Spider):
 
     def article(self, response):
         title = response.css('title::text').extract_first()
-        date =  response.css('ui.data li::text').extract_first().split(' ')[0]
+        date =  response.css('ul.data li::text').extract_first().split(' ')[0]
         content = response.css('div.answer p::text').extract()
         cntx = ''.join(content)
         filename = f'{date}:{title}.txt'
