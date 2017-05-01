@@ -13,20 +13,18 @@ class VcbeatSpider(scrapy.Spider):
             page = 1
             res = requests.post(article_list_url, 
                 data = {'categoryId':categoryId, 'page':page})
-            res_content = res.content.decode('utf-8-sig')
-            print(res_content)
-            content = json.loads(res_content)
+            content = json.loads(res.content.decode('utf-8-sig'))
             if 'data' not in content:
                 break
             data = content['data']
             for item in data:
-                yield scrapy.Request(url=f'{article_url}/{item[id]}', 
+                yield scrapy.Request(url=f'''{article_url}/{item['id']}''', 
                     callback=self.parse(item['publish_time'], item['title']))
 
 
 
     def parse(self, date, title):
-        def lam(self, response):
+        def lam(response):
             content = response.xpath('//div[@class="row"]/div[@id="article-detail"]/div[@id="article-content"]/p/span/text()').extract()
             cntx = ''.join(content)
             filename = f'{date}:{title}.txt'
