@@ -10,7 +10,7 @@ class VcbeatSpider(scrapy.Spider):
         article_list_url = 'http://www.vcbeat.net/Index/Index/ajaxGetArticleList'
         article_url = 'http://www.vcbeat.net'
         categoryId = '2999'
-        page = 3
+        page = 1
         while True:
             res = requests.post(article_list_url, 
                 data = {'categoryId':categoryId, 'page':page})
