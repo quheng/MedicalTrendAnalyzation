@@ -5,13 +5,16 @@ import fetch from 'isomorphic-fetch'
 import styles from './Main.css'
 
 import { autobind } from 'react-decoration'
-import { Modal, Form, Button, Slider, Spin, message, Progress, Select } from 'antd'
+import { Tooltip, Modal, Form, Button, Slider, Spin, message, Progress, Select } from 'antd'
 import { checkStatus, apiAddress } from '../../util'
 
 const refName = 'ParamsConfig'
 const FormItem = Form.Item
 const Option = Select.Option
 const autoTopicAmount = 'auto'
+
+const maxTopicNumber = 21
+const minTopicNumber = 2
 
 const getOption = ({ config }) => ({
   title: {
@@ -25,8 +28,8 @@ const getOption = ({ config }) => ({
     }
   },
   xAxis: {
-    min: 2,
-    max: 21,
+    min: minTopicNumber,
+    max: maxTopicNumber,
     splitLine: {
       lineStyle: {
         type: 'dashed'
@@ -100,8 +103,8 @@ class ConfigForm extends React.Component {
             <Select>
               <Option value={autoTopicAmount}>由困惑度自动选取</Option>
               {
-                [3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
-                  <Option value={value}>{value}</Option>
+                [...new Array(maxTopicNumber - minTopicNumber).keys()].map((value) => (
+                  <Option value={value + minTopicNumber}>{value + minTopicNumber}</Option>
                 ))
               }
             </Select>
@@ -146,9 +149,11 @@ class ConfigForm extends React.Component {
         </FormItem>
 
         <FormItem>
-          <Button type='primary' htmlType='submit'>
-            生成
-          </Button>
+          <Tooltip placement='topLeft' title='生成模型需花费约 5 min 左右，请使用脚本生成'>
+            <Button type='primary' htmlType='submit' disabled>
+              生成
+            </Button>
+          </Tooltip>
         </FormItem>
       </Form>
     )

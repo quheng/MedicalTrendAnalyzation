@@ -7,7 +7,6 @@ import os
 import logging
 import sys
 from sklearn.feature_extraction.text import CountVectorizer
-# from LatentDirichletAllocation import LatentDirichletAllocation
 from sklearn.decomposition import LatentDirichletAllocation
 
 from util import BASE_DIR
