@@ -41,6 +41,13 @@ const transformData = (rawData) => {
   return _.map(rawData, (value, index) => ({name: `主题${index + 1}`, max: 1, keywords: value}))
 }
 
+const normalizing = (dataList) => {
+  return _.map(dataList, data => {
+    const sum = _.sum(data)
+    return _.map(data, value => (value / sum))
+  })
+}
+
 export default class Analyze extends React.Component {
   constructor () {
     super()
@@ -89,7 +96,10 @@ export default class Analyze extends React.Component {
       .then((res) => (res.json()))
       .then((results) => {
         this.myChart.hideLoading()
-        this.setState({...this.state, results})
+        this.setState({
+          ...this.state,
+          results: normalizing(results)
+        })
       })
   }
 
