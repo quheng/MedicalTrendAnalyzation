@@ -26,7 +26,7 @@ const getOption = ({ config }) => ({
   },
   xAxis: {
     min: 2,
-    max: 11,
+    max: 21,
     splitLine: {
       lineStyle: {
         type: 'dashed'
