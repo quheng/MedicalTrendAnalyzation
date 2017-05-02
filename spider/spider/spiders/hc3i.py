@@ -4,7 +4,7 @@ import scrapy
 
 class Hc3iSpider(scrapy.Spider):
     name = "hc3i"
-    start_urls = ['http://news.hc3i.cn/col/305/list_305_%d.htm'%x for x in range(1,2)]
+    start_urls = ['http://news.hc3i.cn/col/306/list_306_%d.htm'%x for x in range(1,101)]
 
     def parse(self, response):
         for li in response.css('li.element'):
