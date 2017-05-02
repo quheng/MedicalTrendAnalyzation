@@ -12,57 +12,47 @@ import { checkStatus, apiAddress } from '../../util'
 const refName = 'Compare'
 const Option = Select.Option
 
-const getOption = ({ topic, topicAmountList }) => ({
+const getOption = ({ topic, totTopicAmountList, ldaTopicAmountList, selectedTopic }) => ({
   tooltip: {
     trigger: 'axis',
     axisPointer: {
-      type: 'line',
-      lineStyle: {
-        color: 'rgba(0,0,0,0.2)',
-        width: 1,
-        type: 'solid'
-      }
+      type: 'cross'
     }
   },
-  legend: {
-    data: topic
+  grid: {
+    left: '10%',
+    right: '10%',
+    bottom: '15%'
   },
-  singleAxis: {
-    top: 50,
-    bottom: 50,
-    axisTick: {},
-    axisLabel: {},
-    type: 'time',
-    axisPointer: {
-      animation: true,
-      label: {
-        show: true
-      }
-    },
-    splitLine: {
-      show: true,
-      lineStyle: {
-        type: 'dashed',
-        opacity: 0.2
-      }
+  xAxis: {
+    type: 'category',
+    data: totTopicAmountList.date,
+    scale: true,
+    boundaryGap: false,
+    axisLine: {onZero: false},
+    splitLine: {show: false},
+    splitNumber: 20,
+    min: 'dataMin',
+    max: 'dataMax'
+  },
+  yAxis: {
+    scale: true,
+    splitArea: {
+      show: true
     }
   },
-  series: [
+  dataZoom: [
     {
-      type: 'themeRiver',
-      itemStyle: {
-        emphasis: {
-          shadowBlur: 20,
-          shadowColor: 'rgba(0, 0, 0, 0.8)'
-        }
-      },
-      data: _.flatMap(topicAmountList.data, (topicAmountWithDate, index) =>
-        (topicAmountWithDate.map((topicAmount, dateIndex) => ([
-          topicAmountList.date[dateIndex],
-          topicAmount,
-          topic[index]
-        ])))
-      )
+      type: 'inside',
+      start: 50,
+      end: 100
+    },
+    {
+      show: true,
+      type: 'slider',
+      y: '90%',
+      start: 50,
+      end: 100
     }
   ]
 })
@@ -81,7 +71,10 @@ export default class RelativeTrend extends React.Component {
   constructor () {
     super()
     this.state = {
-      topic: []
+      topic: [],
+      selectedTopic: 0,
+      totTopicAmountList: [],
+      ldaTopicAmountList: []
     }
     fetch(`${apiAddress}/tot-topic`, { method: 'GET' })
       .then(checkStatus)
@@ -92,13 +85,22 @@ export default class RelativeTrend extends React.Component {
       .then((res) => (res.json()))
       .then((topicAbsAmountList) => this.setState({
         ...this.state,
-        topicAmountList: transformData(topicAbsAmountList)
+        totTopicAmountList: transformData(topicAbsAmountList)
+      }))
+    fetch(`${apiAddress}/lda-topic-amount`, { method: 'GET' })
+      .then(checkStatus)
+      .then((res) => (res.json()))
+      .then((topicAbsAmountList) => this.setState({
+        ...this.state,
+        ldaTopicAmountList: transformData(topicAbsAmountList)
       }))
   }
 
   @autobind
   isDataLoaded () {
-    return !_.isEmpty(this.state.topic) && !_.isEmpty(this.state.topicAmountList)
+    return !_.isEmpty(this.state.topic) &&
+      !_.isEmpty(this.state.ldaTopicAmountList) &&
+      !_.isEmpty(this.state.totTopicAmountList)
   }
 
   componentDidMount () {
@@ -129,7 +131,7 @@ export default class RelativeTrend extends React.Component {
       />
       {this.isDataLoaded()
         ? <div className={styles.topicSelector}>
-          <p>请选择主题进行对比，主题名是对关键词的人工解释</p>
+          <p>请选择主题进行对比，主题名称是对关键词的人工解释</p>
           <Select defaultValue={this.state.topic[0]} style={{ width: 120 }} onChange={this.handleChange}>
             {
                 this.state.topic.map((topic, index) => (
