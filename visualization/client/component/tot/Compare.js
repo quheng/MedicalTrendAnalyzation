@@ -6,9 +6,11 @@ import styles from './Main.css'
 import Loading from '../Loading'
 
 import { autobind } from 'react-decoration'
+import { Select } from 'antd'
 import { checkStatus, apiAddress } from '../../util'
 
 const refName = 'Compare'
+const Option = Select.Option
 
 const getOption = ({ topic, topicAmountList }) => ({
   tooltip: {
@@ -110,6 +112,14 @@ export default class RelativeTrend extends React.Component {
     }
   }
 
+  @autobind
+  handleChange (value) {
+    this.setState({
+      ...this.state,
+      selectedTopic: value
+    })
+  }
+
   render () {
     return <div
       className={styles.container}>
@@ -118,7 +128,16 @@ export default class RelativeTrend extends React.Component {
         ref={refName}
       />
       {this.isDataLoaded()
-        ? <div />
+        ? <div className={styles.topicSelector}>
+          <p>请选择主题进行对比，主题名是对关键词的人工解释</p>
+          <Select defaultValue={this.state.topic[0]} style={{ width: 120 }} onChange={this.handleChange}>
+            {
+                this.state.topic.map((topic, index) => (
+                  <Option value={index}>{topic}</Option>
+                ))
+              }
+          </Select>
+        </div>
         : <Loading />}
     </div>
   }
