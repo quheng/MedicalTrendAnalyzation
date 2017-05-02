@@ -19,6 +19,9 @@ const getOption = ({ topic, totTopicAmountList, ldaTopicAmountList, selectedTopi
       type: 'cross'
     }
   },
+  legend: {
+    data: ['tot', 'lda']
+  },
   grid: {
     left: '10%',
     right: '10%',
@@ -54,7 +57,24 @@ const getOption = ({ topic, totTopicAmountList, ldaTopicAmountList, selectedTopi
       start: 50,
       end: 100
     }
-  ]
+  ],
+  series: [{
+    name: 'tot',
+    type: 'line',
+    data: totTopicAmountList.data[selectedTopic],
+    smooth: true,
+    lineStyle: {
+      normal: {opacity: 0.5}
+    }
+  }, {
+    name: 'lda',
+    type: 'line',
+    data: ldaTopicAmountList.data[selectedTopic],
+    smooth: true,
+    lineStyle: {
+      normal: {opacity: 0.5}
+    }
+  }]
 })
 
 const transformData = (topicAbsAmountList) => {
@@ -110,6 +130,7 @@ export default class RelativeTrend extends React.Component {
   componentDidUpdate () {
     if (this.isDataLoaded()) {
       const option = getOption(this.state)
+      console.log(option)
       this.myChart.setOption(option)
     }
   }
@@ -132,7 +153,7 @@ export default class RelativeTrend extends React.Component {
       {this.isDataLoaded()
         ? <div className={styles.topicSelector}>
           <p>请选择主题进行对比，主题名称是对关键词的人工解释</p>
-          <Select defaultValue={this.state.topic[0]} style={{ width: 120 }} onChange={this.handleChange}>
+          <Select defaultValue={this.state.topic[0]} style={{ width: 200 }} onChange={this.handleChange}>
             {
                 this.state.topic.map((topic, index) => (
                   <Option value={index}>{topic}</Option>
