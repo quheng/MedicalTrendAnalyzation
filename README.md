@@ -6,6 +6,9 @@
 
 This is a project to do some medical trend analysis and visualization.
 
+## spider
+Use `scrapy crawl <spider name>` under `spider` to run spider. 
+
 ## process data
 
 ### environment
