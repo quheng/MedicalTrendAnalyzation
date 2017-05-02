@@ -12,18 +12,18 @@ import { checkStatus, apiAddress } from '../../util'
 const refName = 'Compare'
 const Option = Select.Option
 
-const get5MaCalculator = (values) => {
+const get3MaCalculator = (values) => {
   const result = []
   for (let i = 0, len = values.length; i < len; i++) {
-    if (i < 5) {
+    if (i < 3) {
       result.push('-')
       continue
     }
     let sum = 0
-    for (let j = 0; j < 5; j++) {
+    for (let j = 0; j < 3; j++) {
       sum += values[i - j]
     }
-    result.push(sum / 5)
+    result.push(sum / 3)
   }
   return result
 }
@@ -63,21 +63,21 @@ const getOption = ({ topic, totTopicAmountList, ldaTopicAmountList, selectedTopi
   dataZoom: [
     {
       type: 'inside',
-      start: 50,
+      start: 0,
       end: 100
     },
     {
       show: true,
       type: 'slider',
       y: '90%',
-      start: 50,
+      start: 0,
       end: 100
     }
   ],
   series: [{
     name: 'tot',
     type: 'line',
-    data: get5MaCalculator(totTopicAmountList.data[selectedTopic]),
+    data: get3MaCalculator(totTopicAmountList.data[selectedTopic]),
     smooth: true,
     lineStyle: {
       normal: {opacity: 0.5}
@@ -85,7 +85,7 @@ const getOption = ({ topic, totTopicAmountList, ldaTopicAmountList, selectedTopi
   }, {
     name: 'lda',
     type: 'line',
-    data: get5MaCalculator(ldaTopicAmountList.data[selectedTopic]),
+    data: get3MaCalculator(ldaTopicAmountList.data[selectedTopic]),
     smooth: true,
     lineStyle: {
       normal: {opacity: 0.5}
