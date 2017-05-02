@@ -54,6 +54,11 @@ const getOption = ({ topic, topicAmountList }) => ({
           shadowColor: 'rgba(0, 0, 0, 0.8)'
         }
       },
+      label: {
+        normal: {
+          show: false
+        }
+      },
       data: _.flatMap(topicAmountList.data, (topicAmountWithDate, index) =>
         (topicAmountWithDate.map((topicAmount, dateIndex) => ([
           topicAmountList.date[dateIndex],
