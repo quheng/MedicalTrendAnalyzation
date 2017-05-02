@@ -12,6 +12,22 @@ import { checkStatus, apiAddress } from '../../util'
 const refName = 'Compare'
 const Option = Select.Option
 
+const get5MaCalculator = (values) => {
+  const result = []
+  for (let i = 0, len = values.length; i < len; i++) {
+    if (i < 5) {
+      result.push('-')
+      continue
+    }
+    let sum = 0
+    for (let j = 0; j < 5; j++) {
+      sum += values[i - j]
+    }
+    result.push(sum / 5)
+  }
+  return result
+}
+
 const getOption = ({ topic, totTopicAmountList, ldaTopicAmountList, selectedTopic }) => ({
   tooltip: {
     trigger: 'axis',
@@ -61,7 +77,7 @@ const getOption = ({ topic, totTopicAmountList, ldaTopicAmountList, selectedTopi
   series: [{
     name: 'tot',
     type: 'line',
-    data: totTopicAmountList.data[selectedTopic],
+    data: get5MaCalculator(totTopicAmountList.data[selectedTopic]),
     smooth: true,
     lineStyle: {
       normal: {opacity: 0.5}
@@ -69,7 +85,7 @@ const getOption = ({ topic, totTopicAmountList, ldaTopicAmountList, selectedTopi
   }, {
     name: 'lda',
     type: 'line',
-    data: ldaTopicAmountList.data[selectedTopic],
+    data: get5MaCalculator(ldaTopicAmountList.data[selectedTopic]),
     smooth: true,
     lineStyle: {
       normal: {opacity: 0.5}
