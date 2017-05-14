@@ -279,7 +279,6 @@ export default class RelativeTrend extends React.Component {
           ))
         }
       </div>
-
       <div style={{width: 222}}>
         <div>
           <Checkbox
