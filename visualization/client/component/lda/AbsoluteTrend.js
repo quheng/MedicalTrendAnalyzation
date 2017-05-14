@@ -22,47 +22,45 @@ const getSeries = (topicsName, topicValues) => (
     data: topicValues[topicName]
   })))
 
-const getOption = ({ topicsName, categoryData, topicValues, topicKeywords }) => {
-  return {
-    title: {
-      text: '绝对趋势',
-      left: 10
+const getOption = ({ topicsName, categoryData, topicValues, topicKeywords }) => ({
+  title: {
+    text: '绝对趋势',
+    left: 10
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow'
     },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      },
-      formatter: (topicList) => {
-        const res = topicList.map((topic, index) => (
+    formatter: (topicList) => {
+      const res = topicList.map((topic, index) => (
           `主题${index + 1} ${topicKeywords[index]}: ${topic.data}`
         ))
-        return res.join('<br>')
-      }
-    },
-    legend: {
-      data: topicsName
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: [
-      {
-        type: 'category',
-        data: categoryData
-      }
-    ],
-    yAxis: [
-      {
-        type: 'value'
-      }
-    ],
-    series: getSeries(topicsName, topicValues)
-  }
-}
+      return res.join('<br>')
+    }
+  },
+  legend: {
+    data: topicsName
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
+  },
+  xAxis: [
+    {
+      type: 'category',
+      data: categoryData
+    }
+  ],
+  yAxis: [
+    {
+      type: 'value'
+    }
+  ],
+  series: getSeries(topicsName, topicValues)
+})
 
 const topicName = (index) => (`主题${index + 1}`)
 
