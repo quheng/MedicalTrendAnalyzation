@@ -134,7 +134,6 @@ export default class AbsoluteTrend extends React.Component {
 
   componentDidUpdate () {
     const option = getOption(this.state)
-    console.log(JSON.stringify(this.state))
     this.myChart.setOption(option)
   }
 

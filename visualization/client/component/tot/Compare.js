@@ -152,7 +152,6 @@ export default class RelativeTrend extends React.Component {
   componentDidUpdate () {
     if (this.isDataLoaded()) {
       const option = getOption(this.state)
-      console.log(option)
       this.myChart.setOption(option)
     }
   }
