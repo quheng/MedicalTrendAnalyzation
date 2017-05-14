@@ -30,7 +30,7 @@ const getMaCalculator = (values, dayCount) => {
     for (let j = 0; j < dayCount; j++) {
       sum += values[i - j]
     }
-    result.push((sum / dayCount).toFixed(4))
+    result.push((sum / dayCount))
   }
   return result
 }
@@ -59,7 +59,13 @@ const getOption = (categoryData) => {
       trigger: 'axis',
       axisPointer: {
         type: 'cross'
-      }
+      },
+      formatter: (dataList) => (
+        dataList.map(data => {
+          const value = (data.value * 100).toFixed(2)
+          return `${data.seriesName}: ${value}%`
+        }).join('<br>')
+      )
     },
     grid: {
       left: '10%',
