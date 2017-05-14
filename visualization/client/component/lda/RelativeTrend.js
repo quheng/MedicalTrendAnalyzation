@@ -30,7 +30,7 @@ const getMaCalculator = (values, dayCount) => {
     for (let j = 0; j < dayCount; j++) {
       sum += values[i - j]
     }
-    result.push(sum / dayCount)
+    result.push((sum / dayCount).toFixed(4))
   }
   return result
 }
