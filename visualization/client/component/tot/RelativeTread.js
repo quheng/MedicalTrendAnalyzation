@@ -20,7 +20,13 @@ const getOption = ({ topic, topicAmountList }) => ({
         width: 1,
         type: 'solid'
       }
-    }
+    },
+    formatter: (dataList) => (
+      dataList.map(data => {
+        const value = data.value
+        return `${value[2]}: ${(value[1] * 100).toFixed(2)}%`
+      }).join('<br>')
+    )
   },
   legend: {
     data: topic

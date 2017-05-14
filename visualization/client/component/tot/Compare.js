@@ -33,7 +33,13 @@ const getOption = ({ topic, totTopicAmountList, ldaTopicAmountList, selectedTopi
     trigger: 'axis',
     axisPointer: {
       type: 'cross'
-    }
+    },
+    formatter: (dataList) => (
+      dataList.map(data => {
+        const value = (data.value * 100).toFixed(2)
+        return `${data.seriesName}: ${value}%`
+      }).join('<br>')
+    )
   },
   legend: {
     data: ['tot', 'lda']

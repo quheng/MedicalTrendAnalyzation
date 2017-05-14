@@ -26,7 +26,7 @@ const getOption = ({ topicsName, categoryData, topicValues, topicKeywords }) => 
   return {
     title: {
       text: '绝对趋势',
-      left: 100
+      left: 10
     },
     tooltip: {
       trigger: 'axis',
